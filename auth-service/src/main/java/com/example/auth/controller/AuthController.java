@@ -1,34 +1,33 @@
 package com.example.auth.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/auth")
 public class AuthController {
 
-    @GetMapping("/health")
-    public String health() {
-        return "Auth Service is running!";
-    }
-
     @PostMapping("/login")
-    public Map<String, String> login(@RequestParam String username, @RequestParam String password) {
-        Map<String, String> response = new HashMap<>();
+    public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
+        Map<String, Object> response = new HashMap<>();
         
-        // Simples validação de exemplo
-        if ("admin".equals(username) && "password".equals(password)) {
-            response.put("status", "success");
-            response.put("token", "dummy-token-123");
-        } else {
-            response.put("status", "error");
-            response.put("message", "Invalid credentials");
+        if ("admin".equals(username) && "admin123".equals(password)) {
+            response.put("success", true);
+            response.put("message", "Login successful");
+            response.put("token", "dummy-token-" + System.currentTimeMillis());
+            return ResponseEntity.ok(response);
         }
         
-        return response;
+        response.put("success", false);
+        response.put("message", "Invalid credentials");
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok("Auth service is working!");
     }
 } 
