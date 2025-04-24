@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Carrinho</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2>Carrinho</h2>
+            <div class="user-info">
+                <a th:href="@{/vehicles}" class="btn">Voltar</a>
+            </div>
+        </header>
+
+        <div th:if="${message}" th:class="${'alert ' + alertClass}" th:text="${message}">
+        </div>
+
+        <div class="cart-items">
+            <div th:if="${cart.items.empty}" class="empty-cart">
+                <p>Seu carrinho está vazio</p>
+            </div>
+            
+            <div th:each="item : ${cart.items}" class="cart-item">
+                <div class="item-details">
+                    <h4 th:text="${item.vehicle.modelo}">Modelo</h4>
+                    <p th:text="${'R$ ' + item.vehicle.preco}">Preço</p>
+                </div>
+                <form th:action="@{/cart/remove}" method="post" style="display: inline;">
+                    <input type="hidden" name="vehicleId" th:value="${item.vehicle.id}">
+                    <button type="submit" class="btn btn-danger">Remover</button>
+                </form>
+            </div>
+
+            <div th:if="${!cart.items.empty}" class="cart-summary">
+                <div class="cart-total">
+                    <strong>Total:</strong>
+                    <span th:text="${'R$ ' + cart.total}">0.00</span>
+                </div>
+                
+                <div class="cart-actions">
+                    <form th:action="@{/cart/checkout}" method="post" style="display: inline;">
+                        <button type="submit" class="btn">
+                            <span sec:authorize="hasRole('CLIENTE')">Efetivar Compra</span>
+                            <span sec:authorize="hasRole('VENDEDOR')">Efetivar Venda</span>
+                        </button>
+                    </form>
+                    <form th:action="@{/cart/clear}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // Verificar tempo de expiração do carrinho
+        const cartTimeout = /*[[${cart.expiresAt}]]*/ null;
+        
+        if (cartTimeout) {
+            const checkExpiration = () => {
+                const now = new Date().getTime();
+                const expirationTime = new Date(cartTimeout).getTime();
+                
+                if (now >= expirationTime) {
+                    alert('Seu carrinho expirou! Os itens serão removidos.');
+                    window.location.href = '/cart/clear';
+                }
+            };
+
+            // Verificar a cada 5 segundos
+            setInterval(checkExpiration, 5000);
+        }
+    </script>
+</body>
+</html> 

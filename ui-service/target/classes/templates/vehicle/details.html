@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalhes do Veículo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2>Detalhes do Veículo</h2>
+            <div class="user-info">
+                <a th:href="@{/vehicles}" class="btn">Voltar</a>
+            </div>
+        </header>
+
+        <div class="vehicle-details">
+            <h3 th:text="${vehicle.modelo}">Modelo</h3>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <strong>Ano:</strong>
+                    <span th:text="${vehicle.ano}">2024</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Preço:</strong>
+                    <span th:text="${'R$ ' + vehicle.preco}">100.000</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Cor:</strong>
+                    <span th:text="${vehicle.cor}">Preto</span>
+                </div>
+            </div>
+
+            <div class="actions">
+                <form th:action="@{/cart/add}" method="post">
+                    <input type="hidden" name="vehicleId" th:value="${vehicle.id}">
+                    <button type="submit" class="btn">Adicionar ao Carrinho</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

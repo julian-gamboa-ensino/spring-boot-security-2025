@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Veículos Disponíveis</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2>Veículos Disponíveis</h2>
+            <div class="user-info">
+                <span th:text="${session.role}"></span>
+                <a th:href="@{/logout}">Sair</a>
+            </div>
+        </header>
+
+        <div class="vehicles-grid">
+            <div th:each="vehicle : ${vehicles}" class="vehicle-card">
+                <h3 th:text="${vehicle.modelo}">Modelo</h3>
+                <p th:text="${'Ano: ' + vehicle.ano}">Ano</p>
+                <p th:text="${'Preço: R$ ' + vehicle.preco}">Preço</p>
+                <p th:text="${'Cor: ' + vehicle.cor}">Cor</p>
+                <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn">Ver Detalhes</a>
+            </div>
+        </div>
+
+        <div sec:authorize="hasRole('VENDEDOR')" class="admin-section">
+            <a th:href="@{/users}" class="btn">Listar Usuários</a>
+        </div>
+    </div>
+</body>
+</html> 

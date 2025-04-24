@@ -1,0 +1,12 @@
+{
+  "name": "ui-service-tests",
+  "version": "1.0.0",
+  "description": "Testes E2E para UI Service",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.0"
+  }
+} 

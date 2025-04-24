@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Usuários Cadastrados</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2>Usuários Cadastrados</h2>
+            <div class="user-info">
+                <a th:href="@{/vehicles}" class="btn">Voltar</a>
+            </div>
+        </header>
+
+        <div class="users-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Login</th>
+                        <th>CPF</th>
+                        <th>Perfil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.name}">Nome</td>
+                        <td th:text="${user.login}">Login</td>
+                        <td th:text="${user.cpf}">CPF</td>
+                        <td th:text="${user.role}">Perfil</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 
