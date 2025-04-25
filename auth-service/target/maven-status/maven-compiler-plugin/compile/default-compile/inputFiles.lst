@@ -5,6 +5,8 @@
 /home/julian/cursor/spring-boot-security-2025/auth-service/src/main/java/com/example/auth/model/User.java
 /home/julian/cursor/spring-boot-security-2025/auth-service/src/main/java/com/example/auth/service/JwtService.java
 /home/julian/cursor/spring-boot-security-2025/auth-service/src/main/java/com/example/auth/service/CryptoService.java
+/home/julian/cursor/spring-boot-security-2025/auth-service/src/main/java/com/example/auth/security/JwtConfig.java
 /home/julian/cursor/spring-boot-security-2025/auth-service/src/main/java/com/example/auth/service/UserService.java
 /home/julian/cursor/spring-boot-security-2025/auth-service/src/main/java/com/example/auth/model/Role.java
 /home/julian/cursor/spring-boot-security-2025/auth-service/src/main/java/com/example/auth/config/CryptoConfig.java
+/home/julian/cursor/spring-boot-security-2025/auth-service/src/main/java/com/example/auth/AuthServiceApplication.java

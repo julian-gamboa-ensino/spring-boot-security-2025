@@ -7,8 +7,26 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Entidade que representa um carrinho de compras no sistema.
- * Implementa a lógica de timeout e controle de itens.
+ * Modelo de Carrinho de Compras
+ * ===========================
+ * 
+ * Representa o carrinho de compras temporário de um usuário.
+ * 
+ * Características:
+ * --------------
+ * 1. Temporalidade
+ *    - Expira após 1 minuto
+ *    - Libera veículos após expiração
+ * 
+ * 2. Estados Possíveis
+ *    - ACTIVE: Carrinho em uso
+ *    - EXPIRED: Tempo esgotado
+ *    - COMPLETED: Compra finalizada
+ * 
+ * 3. Regras de Negócio
+ *    - Um usuário só pode ter um carrinho ativo
+ *    - Veículos no carrinho ficam reservados
+ *    - Não permite checkout se vazio
  */
 @Entity
 @Table(name = "carts")

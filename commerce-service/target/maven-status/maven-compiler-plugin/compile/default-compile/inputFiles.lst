@@ -10,6 +10,7 @@
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/controller/CartController.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/exception/BusinessException.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/service/CartService.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/exception/BusinessExceptions.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/config/MetricsConfig.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/controller/VehicleController.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/model/VehicleColor.java

@@ -11,6 +11,7 @@
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/controller/LoginController.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/security/RoleSecurityInterceptor.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/dto/LoginRequest.java
+/home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/config/WebConfig.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/service/UserUIService.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/controller/UserViewController.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/controller/CartController.java

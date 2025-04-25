@@ -7,12 +7,33 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 
 /**
- * Classe principal do serviço de comércio.
- * Este serviço é responsável por:
- * 1. Gerenciamento de veículos (listagem, detalhamento)
- * 2. Controle do carrinho de compras
- * 3. Controle de estoque
- * 4. Processamento de vendas
+ * Serviço de Comércio (Commerce Service)
+ * ====================================
+ * 
+ * Serviço central do sistema, responsável por toda a lógica de negócio
+ * relacionada a veículos, vendas e carrinhos de compra.
+ * 
+ * Funcionalidades Principais:
+ * ------------------------
+ * 1. Gestão de Veículos
+ *    - Cadastro e atualização
+ *    - Controle de disponibilidade
+ *    - Precificação
+ * 
+ * 2. Carrinho de Compras
+ *    - Reserva temporária (1 minuto)
+ *    - Validação de disponibilidade
+ *    - Processo de checkout
+ * 
+ * 3. Vendas
+ *    - Registro de transações
+ *    - Histórico de vendas
+ *    - Relatórios
+ * 
+ * Integrações:
+ * -----------
+ * - Auth Service: Validação de tokens e permissões
+ * - UI Service: Interface com usuário
  * 
  * A anotação @EnableScheduling é usada para habilitar o agendamento de tarefas,
  * necessário para a limpeza automática de carrinhos expirados (timeout de 1 minuto).

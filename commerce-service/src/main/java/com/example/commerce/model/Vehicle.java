@@ -9,8 +9,28 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 /**
- * Entidade que representa um veículo no sistema.
- * Contém todas as informações necessárias sobre o veículo e seu estado no estoque.
+ * Modelo de Veículo
+ * ===============
+ * 
+ * Entidade central do sistema que representa um veículo à venda.
+ * 
+ * Atributos Principais:
+ * -------------------
+ * 1. Informações Básicas
+ *    - Modelo
+ *    - Ano
+ *    - Cor
+ *    - Preço
+ * 
+ * 2. Status
+ *    - AVAILABLE: Disponível para compra
+ *    - RESERVED: Em carrinho de compras
+ *    - SOLD: Vendido
+ * 
+ * 3. Controles
+ *    - Data de cadastro
+ *    - Última atualização
+ *    - Usuário reservante (se reservado)
  */
 @Entity
 @Table(name = "vehicles")
