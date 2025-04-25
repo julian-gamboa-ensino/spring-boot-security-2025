@@ -31,4 +31,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
      * Lista carrinhos por usuário
      */
     List<Cart> findByUserId(Long userId);
+
+    Cart findFirstByOrderByCreatedAtDesc();
 } 

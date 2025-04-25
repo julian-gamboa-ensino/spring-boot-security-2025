@@ -16,7 +16,10 @@
             </div>
         </header>
 
-        <div th:if="${message}" th:class="${'alert ' + alertClass}" th:text="${message}">
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <div id="timeout-warning" class="alert alert-warning" style="display: none;">
+            <span id="timeout-counter"></span>
         </div>
 
         <div class="cart-items">
@@ -57,22 +60,31 @@
     </div>
 
     <script th:inline="javascript">
-        // Verificar tempo de expiração do carrinho
         const cartTimeout = /*[[${cart.expiresAt}]]*/ null;
         
         if (cartTimeout) {
             const checkExpiration = () => {
                 const now = new Date().getTime();
                 const expirationTime = new Date(cartTimeout).getTime();
+                const timeLeft = Math.floor((expirationTime - now) / 1000);
                 
-                if (now >= expirationTime) {
+                const warningElement = document.getElementById('timeout-warning');
+                const counterElement = document.getElementById('timeout-counter');
+                
+                if (timeLeft <= 0) {
                     alert('Seu carrinho expirou! Os itens serão removidos.');
                     window.location.href = '/cart/clear';
+                } else if (timeLeft <= 30) { // Aviso nos últimos 30 segundos
+                    warningElement.style.display = 'block';
+                    counterElement.textContent = `Atenção: Seu carrinho expira em ${timeLeft} segundos!`;
                 }
             };
 
-            // Verificar a cada 5 segundos
-            setInterval(checkExpiration, 5000);
+            // Verificar a cada segundo
+            setInterval(checkExpiration, 1000);
+            
+            // Verificação inicial
+            checkExpiration();
         }
     </script>
 </body>
