@@ -39,7 +39,7 @@
 <body>
     <div class="form-container">
         <h2>Login</h2>
-        <form th:action="@{/perform_login}" method="post">
+        <form th:action="@{/login}" method="post">
             <div class="form-group">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required />
@@ -49,7 +49,7 @@
                 <input type="password" id="password" name="password" required />
             </div>
             <div th:if="${error}" class="error-message">
-                <p th:text="${error}">Error message</p>
+                <p th:text="${error}"></p>
             </div>
             <div th:if="${param.error}" class="error-message">
                 <p>Invalid username or password.</p>

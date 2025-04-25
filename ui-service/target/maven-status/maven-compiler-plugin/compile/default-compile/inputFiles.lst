@@ -1,6 +1,5 @@
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/security/SecurityInterceptor.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/service/AuthUIService.java
-/home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/controller/AuthViewController.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/UiServiceApplication.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/config/SecurityConfig.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/config/WebClientConfig.java
@@ -10,6 +9,7 @@
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/controller/VehicleViewController.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/service/VehicleUIService.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/controller/CartViewController.java
+/home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/controller/LoginController.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/security/RoleSecurityInterceptor.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/dto/LoginRequest.java
 /home/julian/cursor/spring-boot-security-2025/ui-service/src/main/java/com/example/ui/service/UserUIService.java

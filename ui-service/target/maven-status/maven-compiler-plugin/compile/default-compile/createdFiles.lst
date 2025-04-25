@@ -1,3 +1,4 @@
+com/example/ui/controller/LoginController.class
 com/example/ui/dto/RegisterRequest.class
 com/example/ui/controller/VehicleViewController.class
 com/example/ui/service/VehicleUIService.class
@@ -8,7 +9,6 @@ com/example/ui/controller/UserViewController.class
 com/example/ui/UiServiceApplication.class
 com/example/ui/exception/GlobalExceptionHandler.class
 com/example/ui/security/SecurityInterceptor.class
-com/example/ui/controller/AuthViewController.class
 com/example/ui/service/AuthUIService.class
 com/example/ui/controller/CartViewController.class
 com/example/ui/service/UserUIService.class
