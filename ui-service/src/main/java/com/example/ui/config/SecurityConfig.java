@@ -15,17 +15,19 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/login", "/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .permitAll()
+                .loginProcessingUrl("/perform_login")
                 .defaultSuccessUrl("/vehicles", true)
+                .failureUrl("/login?error")
+                .permitAll()
             )
             .logout(logout -> logout
-                .permitAll()
                 .logoutSuccessUrl("/login?logout")
+                .permitAll()
             );
         
         return http.build();
