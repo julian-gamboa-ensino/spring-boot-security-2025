@@ -13,7 +13,32 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Serviço responsável pela lógica de negócio relacionada a carrinhos.
+ * Serviço de Carrinho
+ * =================
+ * 
+ * REGRAS DE NEGÓCIO:
+ * ----------------
+ * 1. Timeout:
+ *    - 1 minuto por item no carrinho
+ *    - Configurável via application.properties
+ *    - Expiração invalida checkout
+ * 
+ * 2. Disponibilidade:
+ *    - Veículo fica indisponível ao adicionar
+ *    - Retorna disponível após:
+ *      * Cancelamento
+ *      * Timeout
+ *      * Desistência
+ * 
+ * 3. Validações:
+ *    - Obrigatório ter item no carrinho
+ *    - Impede checkout com item expirado
+ *    - Verifica disponibilidade
+ * 
+ * PROPRIEDADES CONFIGURÁVEIS:
+ * ------------------------
+ * cart.timeout.minutes=1
+ * cart.cleanup.interval=30000
  */
 @Service
 @RequiredArgsConstructor

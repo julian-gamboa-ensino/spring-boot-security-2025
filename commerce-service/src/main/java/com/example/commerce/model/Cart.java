@@ -7,26 +7,39 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Modelo de Carrinho de Compras
- * ===========================
+ * Entidade Carrinho
+ * ==============
  * 
- * Representa o carrinho de compras temporário de um usuário.
+ * COMPOSIÇÃO:
+ * ---------
+ * - id: Long
+ * - cliente: User
+ * - veiculo: Vehicle
+ * - dataAdicao: LocalDateTime
+ * - status: Enum {ATIVO, EXPIRADO, FINALIZADO}
  * 
- * Características:
+ * REGRAS TEMPORAIS:
  * --------------
- * 1. Temporalidade
- *    - Expira após 1 minuto
- *    - Libera veículos após expiração
+ * - Tempo máximo: 1 minuto por item
+ * - Cronômetro visível na tela
+ * - Verificação automática de expiração
  * 
- * 2. Estados Possíveis
- *    - ACTIVE: Carrinho em uso
- *    - EXPIRED: Tempo esgotado
- *    - COMPLETED: Compra finalizada
+ * ESTADOS DO VEÍCULO:
+ * ----------------
+ * 1. Ao Adicionar:
+ *    - Veículo fica indisponível
+ *    - Timer inicia contagem
+ *    - Status ATIVO
  * 
- * 3. Regras de Negócio
- *    - Um usuário só pode ter um carrinho ativo
- *    - Veículos no carrinho ficam reservados
- *    - Não permite checkout se vazio
+ * 2. Ao Cancelar/Expirar:
+ *    - Veículo volta a disponível
+ *    - Timer é cancelado
+ *    - Status EXPIRADO
+ * 
+ * 3. Ao Finalizar:
+ *    - Veículo permanece indisponível
+ *    - Gera venda
+ *    - Status FINALIZADO
  */
 @Entity
 @Table(name = "carts")

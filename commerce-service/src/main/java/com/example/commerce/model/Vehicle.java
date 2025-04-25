@@ -9,28 +9,33 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 /**
- * Modelo de Veículo
- * ===============
+ * Entidade Veículo
+ * ==============
  * 
- * Entidade central do sistema que representa um veículo à venda.
+ * ATRIBUTOS:
+ * --------
+ * - ano: Integer
+ * - precoBase: BigDecimal
+ * - cor: Enum {BRANCA, PRATA, PRETA}
+ * - modelo: String
+ * - disponivel: boolean
  * 
- * Atributos Principais:
- * -------------------
- * 1. Informações Básicas
- *    - Modelo
- *    - Ano
- *    - Cor
- *    - Preço
+ * REGRAS DE PREÇO:
+ * --------------
+ * 1. Pessoa Jurídica:
+ *    precoFinal = (precoBase + precoCor) * 0.8 (20% desconto)
  * 
- * 2. Status
- *    - AVAILABLE: Disponível para compra
- *    - RESERVED: Em carrinho de compras
- *    - SOLD: Vendido
+ * 2. Pessoa Física PCD:
+ *    precoFinal = (precoBase + precoCor) * 0.7 (30% desconto)
  * 
- * 3. Controles
- *    - Data de cadastro
- *    - Última atualização
- *    - Usuário reservante (se reservado)
+ * 3. Pessoa Física comum:
+ *    precoFinal = precoBase + precoCor (sem desconto)
+ * 
+ * ESTADOS:
+ * ------
+ * - Disponível: pode ser adicionado ao carrinho
+ * - Reservado: em carrinho (indisponível por 1 minuto)
+ * - Vendido: baixa permanente no estoque
  */
 @Entity
 @Table(name = "vehicles")

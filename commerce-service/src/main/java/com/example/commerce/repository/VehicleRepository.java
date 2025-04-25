@@ -13,8 +13,33 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repositório para a entidade Vehicle.
- * Fornece operações de banco de dados para veículos.
+ * Repositório de Veículos
+ * ====================
+ * 
+ * OPERAÇÕES PRINCIPAIS:
+ * -----------------
+ * 1. Consultas:
+ *    - Busca por disponibilidade
+ *    - Filtro por características
+ *    - Ordenação personalizada
+ * 
+ * 2. Atualizações:
+ *    - Status de disponibilidade
+ *    - Baixa em estoque
+ *    - Reservas temporárias
+ * 
+ * DADOS INICIAIS:
+ * ------------
+ * - Veículos pré-cadastrados
+ * - Script de inicialização
+ * - Dados de exemplo
+ * 
+ * ÍNDICES:
+ * -------
+ * - Disponibilidade
+ * - Modelo
+ * - Preço
+ * - Ano
  */
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {

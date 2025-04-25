@@ -12,7 +12,32 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Serviço responsável pela lógica de negócio relacionada a veículos.
+ * Serviço de Gestão de Veículos
+ * ==========================
+ * 
+ * DADOS PRÉ-CADASTRADOS:
+ * -------------------
+ * - Veículos carregados na inicialização
+ * - Script SQL com dados iniciais
+ * - Atualização via admin
+ * 
+ * ATRIBUTOS DO VEÍCULO:
+ * ------------------
+ * 1. Básicos:
+ *    - ano: Integer
+ *    - precoBase: BigDecimal
+ *    - modelo: String
+ * 
+ * 2. Cor (impacta preço):
+ *    BRANCA: preço base
+ *    PRATA: +R$ 2.000,00
+ *    PRETA: +R$ 1.000,00
+ * 
+ * DISPONIBILIDADE:
+ * -------------
+ * - Status atualizado em tempo real
+ * - Bloqueio automático ao adicionar no carrinho
+ * - Liberação automática após expiração/cancelamento
  */
 @Service
 @RequiredArgsConstructor

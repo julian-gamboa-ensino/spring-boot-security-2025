@@ -9,8 +9,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Entidade que representa uma venda no sistema.
- * Registra tanto vendas online (cliente) quanto físicas (vendedor).
+ * Entidade Venda
+ * ============
+ * 
+ * ATRIBUTOS:
+ * --------
+ * - id: Long
+ * - tipo: Enum {ONLINE, FISICA}
+ * - cliente: User
+ * - vendedor: User (opcional)
+ * - veiculo: Vehicle
+ * - valor: BigDecimal
+ * - data: LocalDateTime
+ * 
+ * TIPOS DE VENDA:
+ * ------------
+ * 1. Online (CLIENTE):
+ *    - Sem vendedor
+ *    - Preço calculado automaticamente
+ *    - Requer carrinho válido
+ * 
+ * 2. Física (VENDEDOR):
+ *    - Vendedor obrigatório
+ *    - Preço pode ser negociado
+ *    - Registro direto
+ * 
+ * CÁLCULO DE PREÇO:
+ * --------------
+ * 1. Preço Base + Adicional Cor:
+ *    - BRANCA: +0
+ *    - PRATA: +2000
+ *    - PRETA: +1000
+ * 
+ * 2. Descontos por Tipo:
+ *    - Jurídica: 20% no total
+ *    - PCD: 30% no total
+ *    - Comum: sem desconto
  */
 @Entity
 @Table(name = "sales")
