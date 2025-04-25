@@ -33,6 +33,7 @@ public class Vehicle {
      */
     @NotNull(message = "Preço é obrigatório")
     @Min(value = 0, message = "Preço deve ser maior que zero")
+    @Column(precision = 10, scale = 2)
     private BigDecimal preco;
 
     /**
@@ -40,7 +41,7 @@ public class Vehicle {
      */
     @NotNull(message = "Cor é obrigatória")
     @Enumerated(EnumType.STRING)
-    private VehicleColor cor;
+    private VehicleColor color;
 
     /**
      * Modelo do veículo
@@ -52,6 +53,11 @@ public class Vehicle {
      * Flag que indica se o veículo está disponível para venda
      */
     private boolean disponivel = true;
+
+    /**
+     * Flag que indica se o veículo está vendido (indisponível permanentemente)
+     */
+    private boolean vendido = false;
 
     /**
      * ID do carrinho em que o veículo está, se estiver em algum
@@ -102,4 +108,7 @@ public class Vehicle {
         this.carrinhoId = null;
         this.carrinhoTimestamp = null;
     }
+
+    @Version
+    private Long version; // Para controle de concorrência otimista
 } 

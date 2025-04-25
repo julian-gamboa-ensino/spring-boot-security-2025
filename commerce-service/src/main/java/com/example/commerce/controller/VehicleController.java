@@ -23,11 +23,33 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
+    @GetMapping("/available")
+    public ResponseEntity<List<VehicleDTO>> listAvailable() {
+        return ResponseEntity.ok(vehicleService.listarDisponiveis());
+    }
+
+    @PostMapping("/{id}/reserve")
+    public ResponseEntity<VehicleDTO> reserveVehicle(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") String userId) {
+        return ResponseEntity.ok(vehicleService.reservarVeiculo(id, userId));
+    }
+
+    @PostMapping("/{id}/release")
+    public ResponseEntity<VehicleDTO> releaseVehicle(@PathVariable Long id) {
+        return ResponseEntity.ok(vehicleService.liberarVeiculo(id));
+    }
+
+    @PostMapping("/{id}/sell")
+    public ResponseEntity<VehicleDTO> markAsSold(@PathVariable Long id) {
+        return ResponseEntity.ok(vehicleService.marcarComoVendido(id));
+    }
+
     @GetMapping
     @Operation(summary = "Lista veículos disponíveis", security = @SecurityRequirement(name = "jwt"))
     public ResponseEntity<List<VehicleDTO>> listarDisponiveis() {
-        List<Vehicle> vehicles = vehicleService.listarDisponiveis();
-        return ResponseEntity.ok(vehicles.stream().map(VehicleDTO::fromEntity).toList());
+        List<VehicleDTO> vehicles = vehicleService.listarDisponiveis();
+        return ResponseEntity.ok(vehicles);
     }
 
     @GetMapping("/{id}")

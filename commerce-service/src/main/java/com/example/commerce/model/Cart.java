@@ -2,10 +2,9 @@ package com.example.commerce.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entidade que representa um carrinho de compras no sistema.
@@ -24,15 +23,18 @@ public class Cart {
      * ID do usuário dono do carrinho
      */
     @Column(nullable = false)
-    private Long userId;
+    private String userId;
 
-    /**
-     * Lista de IDs dos veículos no carrinho
-     */
-    @ElementCollection
-    @CollectionTable(name = "cart_vehicles", joinColumns = @JoinColumn(name = "cart_id"))
-    @Column(name = "vehicle_id")
-    private List<Long> vehicleIds = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+        name = "cart_vehicle",
+        joinColumns = @JoinColumn(name = "cart_id"),
+        inverseJoinColumns = @JoinColumn(name = "vehicle_id")
+    )
+    private Set<Vehicle> vehicles = new HashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    private CartStatus status = CartStatus.ACTIVE;
 
     /**
      * Data/hora de criação do carrinho
@@ -42,7 +44,7 @@ public class Cart {
     /**
      * Data/hora de expiração do carrinho
      */
-    private LocalDateTime expiresAt;
+    private LocalDateTime expirationTime;
 
     /**
      * Flag que indica se o carrinho foi finalizado (compra ou cancelamento)
@@ -53,30 +55,28 @@ public class Cart {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         // Carrinho expira em 1 minuto
-        expiresAt = createdAt.plusMinutes(1);
+        expirationTime = createdAt.plusMinutes(1);
     }
 
     /**
      * Verifica se o carrinho está expirado
      */
     public boolean isExpirado() {
-        return LocalDateTime.now().isAfter(expiresAt);
+        return LocalDateTime.now().isAfter(expirationTime);
     }
 
     /**
      * Adiciona um veículo ao carrinho
      */
-    public void adicionarVeiculo(Long vehicleId) {
-        if (!vehicleIds.contains(vehicleId)) {
-            vehicleIds.add(vehicleId);
-        }
+    public void adicionarVeiculo(Vehicle vehicle) {
+        vehicles.add(vehicle);
     }
 
     /**
      * Remove um veículo do carrinho
      */
-    public void removerVeiculo(Long vehicleId) {
-        vehicleIds.remove(vehicleId);
+    public void removerVeiculo(Vehicle vehicle) {
+        vehicles.remove(vehicle);
     }
 
     /**
@@ -90,6 +90,17 @@ public class Cart {
      * Verifica se o carrinho está vazio
      */
     public boolean isVazio() {
-        return vehicleIds.isEmpty();
+        return vehicles.isEmpty();
     }
+
+    private LocalDateTime expiresAt;
+
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(LocalDateTime expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+
 } 

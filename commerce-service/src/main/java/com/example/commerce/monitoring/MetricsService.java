@@ -17,8 +17,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class MetricsService {
 
-    private final MeterRegistry registry;
-
     private final Counter cartsCreatedCounter;
     private final Counter cartsExpiredCounter;
     private final Counter salesCompletedCounter;
@@ -27,7 +25,6 @@ public class MetricsService {
 
     @Autowired
     public MetricsService(MeterRegistry registry) {
-        this.registry = registry;
         this.cartsCreatedCounter = Counter.builder("carts.created")
                 .description("Number of shopping carts created")
                 .register(registry);

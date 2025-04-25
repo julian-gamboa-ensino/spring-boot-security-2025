@@ -1,11 +1,14 @@
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/monitoring/PerformanceMonitoringAspect.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/dto/VehicleDTO.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/model/CartStatus.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/repository/SaleRepository.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/model/Cart.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/monitoring/Monitored.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/mapper/VehicleMapper.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/monitoring/MetricsService.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/repository/VehicleRepository.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/controller/CartController.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/exception/BusinessException.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/service/CartService.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/config/MetricsConfig.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/controller/VehicleController.java
@@ -14,5 +17,6 @@
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/dto/CartDTO.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/repository/CartRepository.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/service/VehicleService.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/exception/ResourceNotFoundException.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/model/Sale.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/CommerceServiceApplication.java

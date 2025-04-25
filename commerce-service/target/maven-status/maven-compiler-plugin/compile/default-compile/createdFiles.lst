@@ -1,13 +1,17 @@
 com/example/commerce/service/CartService.class
 com/example/commerce/controller/VehicleController.class
 com/example/commerce/CommerceServiceApplication.class
+com/example/commerce/exception/BusinessException.class
 com/example/commerce/dto/CartDTO.class
 com/example/commerce/service/VehicleService.class
 com/example/commerce/repository/VehicleRepository.class
+com/example/commerce/exception/ResourceNotFoundException.class
 com/example/commerce/model/Vehicle.class
+com/example/commerce/model/CartStatus.class
 com/example/commerce/model/Sale.class
 com/example/commerce/controller/CartController.class
 com/example/commerce/config/MetricsConfig.class
+com/example/commerce/mapper/VehicleMapper.class
 com/example/commerce/monitoring/MetricsService.class
 com/example/commerce/model/Sale$SaleType.class
 com/example/commerce/model/Cart.class

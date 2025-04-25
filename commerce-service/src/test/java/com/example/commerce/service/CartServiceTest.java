@@ -40,7 +40,7 @@ class CartServiceTest {
     @BeforeEach
     void setUp() {
         testCart = new Cart();
-        testCart.setUserId(1L);
+        testCart.setUserId(String.valueOf(1L));
         testCart.setCreatedAt(LocalDateTime.now());
         testCart.setExpiresAt(LocalDateTime.now().plusMinutes(1));
     }

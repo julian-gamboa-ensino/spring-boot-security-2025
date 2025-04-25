@@ -1,14 +1,16 @@
 package com.example.commerce.service;
 
-import com.example.commerce.model.Cart;
+import com.example.commerce.model.*;
 import com.example.commerce.repository.CartRepository;
 import com.example.commerce.repository.VehicleRepository;
+import com.example.commerce.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Serviço responsável pela lógica de negócio relacionada a carrinhos.
@@ -19,7 +21,6 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final VehicleRepository vehicleRepository;
-    private final VehicleService vehicleService;
     private static final long CART_TIMEOUT_MINUTES = 1; // 1 minuto
 
     /**
@@ -34,7 +35,7 @@ public class CartService {
             });
 
         Cart cart = new Cart();
-        cart.setUserId(userId);
+        cart.setUserId(userId.toString());
         return cartRepository.save(cart);
     }
 
@@ -48,8 +49,9 @@ public class CartService {
             throw new RuntimeException("Carrinho expirado");
         }
         
-        cart.adicionarVeiculo(vehicleId);
-        vehicleService.adicionarAoCarrinho(vehicleId, cartId);
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+            .orElseThrow(() -> new BusinessException("Veículo não encontrado"));
+        cart.adicionarVeiculo(vehicle);
         cartRepository.save(cart);
     }
 
@@ -63,7 +65,9 @@ public class CartService {
         cartRepository.save(cart);
         
         // Remove todos os veículos do carrinho
-        cart.getVehicleIds().forEach(vehicleService::removerDoCarrinho);
+        cart.getVehicles().stream()
+            .map(Vehicle::getId)
+            .forEach(vehicleRepository::deleteById);
     }
 
     /**
@@ -113,5 +117,72 @@ public class CartService {
             return false;
         }
         return LocalDateTime.now().isBefore(cart.getExpiresAt());
+    }
+
+    public boolean isVehicleInActiveCart(Long vehicleId) {
+        return cartRepository.existsByVehiclesIdAndStatus(vehicleId, CartStatus.ACTIVE);
+    }
+
+    @Transactional
+    public void addToCart(Long vehicleId, String userId) {
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+            .orElseThrow(() -> new BusinessException("Veículo não encontrado"));
+
+        Cart cart = cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
+            .orElseGet(() -> createNewCart(userId));
+
+        cart.getVehicles().add(vehicle);
+        cart.setExpirationTime(LocalDateTime.now().plusMinutes(1));
+        cartRepository.save(cart);
+    }
+
+    @Transactional
+    public void removeFromCart(Long vehicleId, String userId) {
+        Cart cart = cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
+            .orElseThrow(() -> new BusinessException("Carrinho não encontrado"));
+
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+            .orElseThrow(() -> new BusinessException("Veículo não encontrado"));
+
+        cart.getVehicles().remove(vehicle);
+        cartRepository.save(cart);
+    }
+
+    @Transactional
+    public void cleanExpiredCarts() {
+        List<Cart> expiredCarts = cartRepository.findByStatusAndExpirationTimeBefore(
+            CartStatus.ACTIVE, 
+            LocalDateTime.now()
+        );
+
+        for (Cart cart : expiredCarts) {
+            cart.setStatus(CartStatus.EXPIRED);
+            cart.getVehicles().clear();
+            cartRepository.save(cart);
+        }
+    }
+
+    private Cart createNewCart(String userId) {
+        Cart cart = new Cart();
+        cart.setUserId(userId);
+        cart.setStatus(CartStatus.ACTIVE);
+        cart.setExpirationTime(LocalDateTime.now().plusMinutes(1));
+        return cartRepository.save(cart);
+    }
+
+    public Cart findActiveCart(String userId) {
+        return cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
+            .orElseThrow(() -> new BusinessException("Carrinho não encontrado"));
+    }
+
+        /**
+     * Adds a vehicle to the cart for the specified user.
+     *
+     * @param vehicleId the ID of the vehicle to add
+     * @param userId the ID of the user
+     */
+    public void addVehicleToCart(Long vehicleId, String userId) {
+        // Implementation logic for adding a vehicle to the cart
+        // Example: Update the cart repository or perform necessary operations
     }
 } 

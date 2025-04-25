@@ -1,12 +1,14 @@
 package com.example.commerce.service;
 
+import com.example.commerce.dto.VehicleDTO;
+import com.example.commerce.exception.BusinessException;
+import com.example.commerce.exception.ResourceNotFoundException;
+import com.example.commerce.mapper.VehicleMapper;
 import com.example.commerce.model.Vehicle;
-import com.example.commerce.model.VehicleColor;
 import com.example.commerce.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 /**
@@ -17,12 +19,16 @@ import java.util.List;
 public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
+    private final VehicleMapper vehicleMapper;
+    private final CartService cartService;
 
     /**
      * Lista todos os veículos disponíveis
      */
-    public List<Vehicle> listarDisponiveis() {
-        return vehicleRepository.findByDisponivelTrue();
+    public List<VehicleDTO> listarDisponiveis() {
+        return vehicleMapper.toDTOList(
+            vehicleRepository.findByDisponivelTrue()
+        );
     }
 
     /**
@@ -30,39 +36,65 @@ public class VehicleService {
      */
     public Vehicle buscarPorId(Long id) {
         return vehicleRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+            .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
     }
 
     /**
      * Adiciona veículo ao carrinho
      */
     @Transactional
-    public void adicionarAoCarrinho(Long vehicleId, Long carrinhoId) {
+    public VehicleDTO reservarVeiculo(Long vehicleId, String userId) {
         Vehicle vehicle = buscarPorId(vehicleId);
+        
         if (!vehicle.isDisponivel()) {
-            throw new RuntimeException("Veículo não está disponível");
+            throw new BusinessException("Veículo não está disponível");
         }
-        vehicle.adicionarAoCarrinho(carrinhoId);
+
+        if (cartService.isVehicleInActiveCart(vehicleId)) {
+            throw new BusinessException("Veículo já está em um carrinho ativo");
+        }
+
+        vehicle.setDisponivel(false);
         vehicleRepository.save(vehicle);
+        
+        cartService.addVehicleToCart(vehicleId, userId);
+        return vehicleMapper.toDTO(vehicle);
     }
 
     /**
      * Remove veículo do carrinho
      */
     @Transactional
-    public void removerDoCarrinho(Long vehicleId) {
-        Vehicle vehicle = buscarPorId(vehicleId);
-        vehicle.removerDoCarrinho();
+    public VehicleDTO liberarVeiculo(Long vehicleId) {
+        Vehicle vehicle = vehicleRepository.findByIdWithLock(vehicleId)
+            .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
+
+        if (vehicle.isVendido()) {
+            throw new BusinessException("Veículo já foi vendido");
+        }
+
+        vehicle.setDisponivel(true);
         vehicleRepository.save(vehicle);
+
+        return vehicleMapper.toDTO(vehicle);
     }
 
     /**
      * Marca veículo como vendido
      */
     @Transactional
-    public void marcarComoVendido(Long vehicleId) {
-        Vehicle vehicle = buscarPorId(vehicleId);
-        vehicle.marcarComoVendido();
+    public VehicleDTO marcarComoVendido(Long vehicleId) {
+        Vehicle vehicle = vehicleRepository.findByIdWithLock(vehicleId)
+            .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
+
+        if (vehicle.isVendido()) {
+            throw new BusinessException("Veículo já foi vendido");
+        }
+
+        vehicle.setVendido(true);
+        vehicle.setDisponivel(false);
         vehicleRepository.save(vehicle);
+
+        return vehicleMapper.toDTO(vehicle);
     }
 } 

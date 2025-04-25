@@ -4,10 +4,13 @@ import com.example.commerce.model.Vehicle;
 import com.example.commerce.model.VehicleColor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repositório para a entidade Vehicle.
@@ -41,4 +44,10 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
      */
     @Query("SELECT v FROM Vehicle v WHERE v.carrinhoId IS NOT NULL AND v.carrinhoTimestamp < :timestamp")
     List<Vehicle> findExpiredCartVehicles(Long timestamp);
+
+    List<Vehicle> findByDisponivelTrueAndVendidoFalse();
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT v FROM Vehicle v WHERE v.id = :id")
+    Optional<Vehicle> findByIdWithLock(Long id);
 } 

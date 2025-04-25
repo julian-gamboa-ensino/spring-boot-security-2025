@@ -1,6 +1,7 @@
 package com.example.commerce.repository;
 
 import com.example.commerce.model.Cart;
+import com.example.commerce.model.CartStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -33,4 +34,9 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     List<Cart> findByUserId(Long userId);
 
     Cart findFirstByOrderByCreatedAtDesc();
+
+    Optional<Cart> findByUserIdAndStatus(String userId, CartStatus status);
+    boolean existsByVehiclesIdAndStatus(Long vehicleId, CartStatus status);
+
+    List<Cart> findByStatusAndExpirationTimeBefore(CartStatus status, LocalDateTime time);
 } 

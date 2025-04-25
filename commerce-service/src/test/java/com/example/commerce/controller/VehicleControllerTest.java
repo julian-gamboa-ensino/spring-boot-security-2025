@@ -1,5 +1,6 @@
 package com.example.commerce.controller;
 
+import com.example.commerce.dto.VehicleDTO;
 import com.example.commerce.model.Vehicle;
 import com.example.commerce.service.VehicleService;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,10 @@ class VehicleControllerTest {
         Vehicle vehicle = new Vehicle();
         vehicle.setId(1L);
         vehicle.setModelo("Test Car");
-        when(vehicleService.listarDisponiveis()).thenReturn(Arrays.asList(vehicle));
+        VehicleDTO vehicleDTO = new VehicleDTO();
+        vehicleDTO.setId(vehicle.getId());
+        vehicleDTO.setModelo(vehicle.getModelo());
+        when(vehicleService.listarDisponiveis()).thenReturn(Arrays.asList(vehicleDTO));
 
         // Act & Assert
         mockMvc.perform(get("/api/vehicles"))
