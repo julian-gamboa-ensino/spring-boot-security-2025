@@ -17,6 +17,7 @@
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/dto/CartDTO.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/repository/CartRepository.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/service/VehicleService.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/security/RoleSecurityInterceptor.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/exception/ResourceNotFoundException.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/model/Sale.java
 /home/julian/cursor/spring-boot-security-2025/commerce-service/src/main/java/com/example/commerce/CommerceServiceApplication.java

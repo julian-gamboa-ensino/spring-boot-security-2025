@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,6 +47,7 @@ public class VehicleController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VENDOR')")
     @Operation(summary = "Lista veículos disponíveis", security = @SecurityRequirement(name = "jwt"))
     public ResponseEntity<List<VehicleDTO>> listarDisponiveis() {
         List<VehicleDTO> vehicles = vehicleService.listarDisponiveis();
@@ -57,5 +59,18 @@ public class VehicleController {
     public ResponseEntity<VehicleDTO> buscarPorId(@PathVariable Long id) {
         Vehicle vehicle = vehicleService.buscarPorId(id);
         return ResponseEntity.ok(VehicleDTO.fromEntity(vehicle));
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('VENDOR')")
+    public VehicleDTO createVehicle(@RequestBody VehicleDTO vehicle) {
+        // ... implementation
+        return null; // Placeholder return, actual implementation needed
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteVehicle(@PathVariable Long id) {
+        // ... implementation
     }
 } 
