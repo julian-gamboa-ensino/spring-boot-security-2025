@@ -5,6 +5,37 @@ import lombok.Data;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Entidade Usuário
+ * ==============
+ * 
+ * DADOS PRINCIPAIS:
+ * --------------
+ * - CPF (String, único, criptografado)
+ * - Nome (String)
+ * - Login (String, único)
+ * - Senha (String, criptografada)
+ * - Perfil (Enum: CLIENTE, VENDEDOR)
+ * 
+ * REGRAS DE PERFIL:
+ * --------------
+ * 1. CLIENTE:
+ *    - Acesso exclusivo ao e-commerce
+ *    - Pode realizar compras online
+ *    - Visualiza apenas próprio histórico
+ * 
+ * 2. VENDEDOR:
+ *    - Acesso ao sistema de vendas físicas
+ *    - Registro de vendas presenciais
+ *    - Consulta de estoque e relatórios
+ * 
+ * OBSERVAÇÕES:
+ * ----------
+ * - Usuários são pré-cadastrados (sem auto-registro)
+ * - CPF deve ser válido e único
+ * - Perfil é imutável após cadastro
+ * - Login é case-sensitive
+ */
 @Entity
 @Data
 public class User {

@@ -9,6 +9,33 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import java.util.Map;
 
+/**
+ * Controlador de Login
+ * =================
+ * 
+ * ACESSO AO SISTEMA:
+ * ---------------
+ * 1. Validação:
+ *    - Login existente na base
+ *    - Senha correta
+ *    - Perfil ativo
+ * 
+ * 2. Redirecionamento:
+ *    - CLIENTE: para e-commerce
+ *    - VENDEDOR: para PDV
+ * 
+ * RESTRIÇÕES:
+ * ---------
+ * - Sem cadastro de novos usuários
+ * - Perfis pré-definidos
+ * - Acessos limitados por perfil
+ * 
+ * SEGURANÇA:
+ * --------
+ * - Validação de CPF
+ * - Dados criptografados
+ * - Sessão por perfil
+ */
 @Controller
 public class LoginController {
     private final RestTemplate restTemplate = new RestTemplate();

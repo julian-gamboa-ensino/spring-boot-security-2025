@@ -11,7 +11,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Controlador responsável pelo gerenciamento do carrinho.
+ * Controlador do Carrinho
+ * ====================
+ * 
+ * ACESSO POR PERFIL:
+ * ---------------
+ * 1. CLIENTE:
+ *    - Acesso total ao carrinho
+ *    - Compras online
+ *    - Checkout digital
+ * 
+ * 2. VENDEDOR:
+ *    - Sem acesso ao carrinho
+ *    - Apenas vendas físicas
+ *    - Sistema separado (PDV)
+ * 
+ * VALIDAÇÕES:
+ * ---------
+ * - Verifica perfil em cada operação
+ * - Bloqueia acessos não autorizados
+ * - Registra tentativas inválidas
  */
 @RestController
 @RequestMapping("/api/cart")
