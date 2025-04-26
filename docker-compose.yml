@@ -15,15 +15,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
 
   auth-service:
     build: ./auth-service
+    container_name: auth-service
     ports:
       - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/commercedb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - app-network
-    volumes:
-      - ~/.m2:/root/.m2   # <-- dev
 
   commerce-service:
     build:
@@ -43,17 +52,14 @@ services:
         condition: service_healthy
       auth-service:
         condition: service_started
-    volumes:
-      - ~/.m2:/root/.m2   # <-- dev
     networks:
       - app-network
 
   ui-service:
     build: ./ui-service
+    container_name: ui-service
     ports:
       - "8080:8080"
-    networks:
-      - app-network
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - COMMERCE_SERVICE_URL=http://commerce-service:8081
@@ -61,8 +67,8 @@ services:
     depends_on:
       - commerce-service
       - auth-service
-    volumes:
-      - ~/.m2:/root/.m2   # <-- dev
+    networks:
+      - app-network
 
 volumes:
   mysql_data:
