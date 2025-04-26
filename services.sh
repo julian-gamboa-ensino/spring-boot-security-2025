@@ -1,11 +1,23 @@
 #!/bin/bash
+set -e
 
-for service in auth-service commerce-service ui-service
-do
+#services=("auth-service")
+services=("auth-service"  "commerce-service" "ui-service")
+
+for service in "${services[@]}"; do
   echo "🔧 Building $service..."
-  cd $service
+  
+  pushd "$service" > /dev/null
+  
   mvn clean
   mvn package -DskipTests
-  docker build -t $service .
-  cd ..
+  
+  DOCKER_BUILDKIT=1 docker buildx build \
+    --build-arg BUILDKIT_INLINE_CACHE=1 \
+    --build-arg MAVEN_OPTS="-Dmaven.repo.local=/root/.m2/repository" \
+    -t "$service" \
+    --load \
+    .
+  
+  popd > /dev/null
 done

@@ -22,6 +22,8 @@ services:
       - "8082:8082"
     networks:
       - app-network
+    volumes:
+      - ~/.m2:/root/.m2   # <-- dev
 
   commerce-service:
     build:
@@ -41,6 +43,10 @@ services:
         condition: service_healthy
       auth-service:
         condition: service_started
+    volumes:
+      - ~/.m2:/root/.m2   # <-- dev
+    networks:
+      - app-network
 
   ui-service:
     build: ./ui-service
@@ -55,6 +61,8 @@ services:
     depends_on:
       - commerce-service
       - auth-service
+    volumes:
+      - ~/.m2:/root/.m2   # <-- dev
 
 volumes:
   mysql_data:
@@ -62,4 +70,4 @@ volumes:
 
 networks:
   app-network:
-    driver: bridge 
+    driver: bridge
