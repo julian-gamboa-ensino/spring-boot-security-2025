@@ -48,29 +48,32 @@ class CartServiceTest {
     @Test
     void criarCarrinho_QuandoUsuarioSemCarrinhoAtivo_DeveCriarNovoCarrinho() {
         // Arrange
-        when(cartRepository.findByUserIdAndFinalizadoFalse(anyLong()))
+        when(cartRepository.findByUserIdAndFinalizadoFalse(anyString()))
             .thenReturn(Optional.empty());
         when(cartRepository.save(any(Cart.class))).thenReturn(testCart);
 
         // Act
-        Cart cart = cartService.criarCarrinho(1L);
+        Cart cart = cartService.criarCarrinho("1");
 
         // Assert
         assertNotNull(cart);
-        assertEquals(1L, cart.getUserId());
+        assertEquals("1", cart.getUserId());
         verify(cartRepository).save(any(Cart.class));
     }
 
     @Test
     void criarCarrinho_QuandoUsuarioTemCarrinhoAtivo_DeveLancarExcecao() {
         // Arrange
-        when(cartRepository.findByUserIdAndFinalizadoFalse(anyLong()))
+        when(cartRepository.findByUserIdAndFinalizadoFalse(anyString()))
             .thenReturn(Optional.of(testCart));
 
         // Act & Assert
-        assertThrows(RuntimeException.class, () -> {
-            cartService.criarCarrinho(1L);
-        });
+        assertThrows(RuntimeException.class, () -> criarCarrinhoComExcecao());
         verify(cartRepository, never()).save(any(Cart.class));
+    }
+     
+
+    private void criarCarrinhoComExcecao() {
+        cartService.criarCarrinho(String.valueOf(1L));
     }
 } 

@@ -17,7 +17,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     /**
      * Lista vendas por usuário
      */
-    List<Sale> findByUserId(Long userId);
+    List<Sale> findByUserId(String userId);
     
     /**
      * Lista vendas por tipo

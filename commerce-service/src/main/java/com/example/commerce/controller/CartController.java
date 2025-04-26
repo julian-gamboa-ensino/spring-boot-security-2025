@@ -42,7 +42,7 @@ public class CartController {
 
     @PostMapping
     @Operation(summary = "Cria novo carrinho", security = @SecurityRequirement(name = "jwt"))
-    public ResponseEntity<CartDTO> criar(@RequestHeader("X-User-Id") Long userId) {
+    public ResponseEntity<CartDTO> criar(@RequestHeader("X-User-Id") String userId) {
         Cart cart = cartService.criarCarrinho(userId);
         return ResponseEntity.ok(CartDTO.fromEntity(cart));
     }

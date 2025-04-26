@@ -59,7 +59,7 @@ public class Sale {
      * ID do usuário que realizou a compra
      */
     @Column(nullable = false)
-    private Long userId;
+    private String userId;
 
     /**
      * Lista de IDs dos veículos vendidos

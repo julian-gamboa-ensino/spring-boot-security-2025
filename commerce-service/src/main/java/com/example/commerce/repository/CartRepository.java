@@ -20,7 +20,7 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     /**
      * Busca o carrinho ativo de um usuário
      */
-    Optional<Cart> findByUserIdAndFinalizadoFalse(Long userId);
+    Optional<Cart> findByUserIdAndFinalizadoFalse(String userId);
     
     /**
      * Lista carrinhos expirados e não finalizados
@@ -31,7 +31,7 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     /**
      * Lista carrinhos por usuário
      */
-    List<Cart> findByUserId(Long userId);
+    List<Cart> findByUserId(String userId);
 
     Cart findFirstByOrderByCreatedAtDesc();
 

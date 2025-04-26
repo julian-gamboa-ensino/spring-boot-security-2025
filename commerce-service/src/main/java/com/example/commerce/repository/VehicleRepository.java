@@ -52,7 +52,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     /**
      * Lista veículos por cor
      */
-    List<Vehicle> findByCor(VehicleColor cor);
+        
+    List<Vehicle> findByColor(VehicleColor color);
     
     /**
      * Lista veículos por faixa de preço

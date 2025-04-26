@@ -52,7 +52,7 @@ public class CartService {
      * Cria um novo carrinho para o usuário
      */
     @Transactional
-    public Cart criarCarrinho(Long userId) {
+    public Cart criarCarrinho(String userId) {
         // Verifica se já existe um carrinho ativo
         cartRepository.findByUserIdAndFinalizadoFalse(userId)
             .ifPresent(cart -> {
@@ -60,7 +60,7 @@ public class CartService {
             });
 
         Cart cart = new Cart();
-        cart.setUserId(userId.toString());
+        cart.setUserId(userId);
         return cartRepository.save(cart);
     }
 

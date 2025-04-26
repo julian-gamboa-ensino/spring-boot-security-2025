@@ -15,27 +15,51 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - app-network
+
   auth-service:
     build: ./auth-service
-    container_name: auth-service
     ports:
       - "8082:8082"
+    networks:
+      - app-network
+
+  commerce-service:
+    build:
+      context: ./commerce-service
+      dockerfile: Dockerfile
+    container_name: commerce-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/commercedb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - AUTH_SERVICE_URL=http://auth-service:8082
     depends_on:
       mysql:
         condition: service_healthy
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/commercedb?createDatabaseIfNotExist=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      auth-service:
+        condition: service_started
+
+  ui-service:
+    build: ./ui-service
+    ports:
+      - "8080:8080"
     networks:
       - app-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - COMMERCE_SERVICE_URL=http://commerce-service:8081
+      - AUTH_SERVICE_URL=http://auth-service:8082
+    depends_on:
+      - commerce-service
+      - auth-service
+
 volumes:
   mysql_data:
     driver: local
+
 networks:
   app-network:
-    driver: bridge
+    driver: bridge 
