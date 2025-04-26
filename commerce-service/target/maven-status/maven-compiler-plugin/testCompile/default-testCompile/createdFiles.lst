@@ -1,0 +1,4 @@
+com/example/commerce/controller/VehicleControllerTest.class
+com/example/commerce/service/CartServiceTest.class
+com/example/commerce/monitoring/MetricsServiceTest.class
+com/example/commerce/monitoring/PerformanceMonitoringAspectTest.class
