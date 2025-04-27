@@ -13,7 +13,9 @@ import java.util.List;
 public class SecurityInterceptor implements HandlerInterceptor {
 
     private static final List<String> PUBLIC_PATHS = Arrays.asList(
-        "/login", "/register", "/css/", "/js/", "/images/"
+        "/login", "/register", "/css/", "/js/", "/images/",
+        "/vehicles", "/cart", "/user", "/error" // apenas na produção
+        // Adicione outros caminhos públicos conforme necessário
     );
 
     @Override

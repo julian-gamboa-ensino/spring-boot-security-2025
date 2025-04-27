@@ -19,10 +19,12 @@ public class VehicleViewController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VENDOR')")
     public String listVehicles(Model model, HttpSession session) {
         String token = (String) session.getAttribute("token");
+
+        /* 
         if (token == null) {
             return "redirect:/login";
         }
-
+*/
         vehicleService.getAvailableVehicles(token)
                 .subscribe(vehicles -> model.addAttribute("vehicles", vehicles));
 
@@ -33,9 +35,11 @@ public class VehicleViewController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VENDOR')")
     public String vehicleDetails(@PathVariable Long id, Model model, HttpSession session) {
         String token = (String) session.getAttribute("token");
+        /*
         if (token == null) {
             return "redirect:/login";
         }
+        */
 
         vehicleService.getVehicleDetails(id, token)
                 .subscribe(vehicle -> model.addAttribute("vehicle", vehicle));
