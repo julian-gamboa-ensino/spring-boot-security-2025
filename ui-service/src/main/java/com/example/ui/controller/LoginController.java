@@ -1,5 +1,6 @@
 package com.example.ui.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,8 +39,13 @@ import java.util.Map;
  */
 @Controller
 public class LoginController {
+
     private final RestTemplate restTemplate = new RestTemplate();
+
     private static final String AUTH_SERVICE_URL = "http://auth-service:8082";
+
+    @Value("${auth.mock-login:false}") // Pega do properties
+    private boolean mockLogin;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -48,25 +54,37 @@ public class LoginController {
 
     @PostMapping("/login")
     public String login(@RequestParam String username, 
-                       @RequestParam String password, 
-                       Model model) {
+                        @RequestParam String password, 
+                        Model model) {
         try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(
-                AUTH_SERVICE_URL + "/api/auth/login?username={username}&password={password}",
-                null,
-                Map.class,
-                username,
-                password
-            );
-            
-            if (response.getBody() != null && Boolean.TRUE.equals(response.getBody().get("success"))) {
-                return "redirect:/vehicles";
+            if (mockLogin) {
+                // MODO MOCK: apenas para desenvolvimento inicial
+                if ("admin".equals(username) && "admin123".equals(password)) {
+                    return "redirect:/vehicles"; // sucesso mockado
+                } else {
+                    model.addAttribute("error", "Usuário ou senha inválidos (modo mock)");
+                    return "login"; // volta para login com erro
+                }
+            } else {
+                // MODO REAL: valida usando o auth-service
+                ResponseEntity<Map> response = restTemplate.postForEntity(
+                    AUTH_SERVICE_URL + "/api/auth/login?username={username}&password={password}",
+                    null,
+                    Map.class,
+                    username,
+                    password
+                );
+                
+                if (response.getBody() != null && Boolean.TRUE.equals(response.getBody().get("success"))) {
+                    return "redirect:/vehicles"; // sucesso real
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        model.addAttribute("error", "Invalid username or password");
+
+        // Se chegar aqui, erro na autenticação
+        model.addAttribute("error", "Usuário ou senha inválidos");
         return "login";
     }
-} 
+}

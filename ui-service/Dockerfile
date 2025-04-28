@@ -1,16 +1,19 @@
-FROM maven:3.9-eclipse-temurin-17 AS build
-WORKDIR /workspace/app
 
-COPY pom.xml .
-# Aproveitar cache de dependências Maven
-RUN --mount=type=cache,target=/root/.m2 \
-    mvn dependency:go-offline
-
-COPY src src
-RUN --mount=type=cache,target=/root/.m2 \
-    mvn clean package -DskipTests
-
-FROM eclipse-temurin:17-jre-jammy
+# Etapa 1: Baixar dependências antes de copiar o código
+FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
-COPY --from=build /workspace/app/target/*.jar app.jar
-ENTRYPOINT ["java","-jar","app.jar"]
+
+# Copia apenas o pom.xml e baixa as dependências
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Agora sim, copia o restante do código
+COPY src ./src
+
+# Compila o projeto
+RUN mvn clean package -DskipTests
+
+# Etapa 2: Gerar a imagem final
+FROM openjdk:17-jdk-slim
+COPY --from=build /app/target/ui-service.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]

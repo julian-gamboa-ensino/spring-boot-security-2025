@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     public SecurityConfig() {
-        // Private constructor to prevent instantiation
+        // Construtor privado para evitar instância
     }
 
     @Configuration
