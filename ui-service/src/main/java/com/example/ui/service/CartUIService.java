@@ -29,6 +29,14 @@ public class CartUIService {
                 .bodyToMono(Map.class);
     }
 
+    public Mono<Map> removeFromCart(Long vehicleId, String token) {
+        return commerceWebClient.post()
+                .uri("/api/cart/remove/" + vehicleId)
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .bodyToMono(Map.class);
+    }
+
     public Mono<Map> checkout(String token) {
         return commerceWebClient.post()
                 .uri("/api/cart/checkout")
