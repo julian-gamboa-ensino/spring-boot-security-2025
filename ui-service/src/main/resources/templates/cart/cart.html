@@ -65,7 +65,7 @@
                         <button type="submit" class="btn btn-primary">
                             <!-- Texto do botão muda conforme o perfil do usuário -->
                             <span sec:authorize="hasRole('CLIENTE')">Efetivar Compra</span>
-                            <span sec:authorize="hasRole('VENDEDOR')">Efetivar Venda</span>
+                            <span sec:authorize="hasRole('VENDEDOR')">Efetivar Venda</span>                            
                         </button>
                     </form>
                     <!-- Link para voltar à página de detalhes do veículo -->
