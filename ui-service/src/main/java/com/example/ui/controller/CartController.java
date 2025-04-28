@@ -3,15 +3,13 @@ package com.example.ui.controller;
 import com.example.ui.service.CartUIService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import reactor.core.publisher.Mono;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/cart")
@@ -19,33 +17,23 @@ import java.util.Map;
 public class CartController {
 
     private final CartUIService cartService;
-    private final Environment environment;
 
     @GetMapping
     public String viewCart(Model model, HttpSession session) {
         String token = (String) session.getAttribute("token");
-
-        if (isDevProfile()) {
-            // Mock data for development
-            Map<String, Object> mockCart = new HashMap<>();
-            Map<String, Object> mockItem = new HashMap<>();
-            Map<String, Object> mockVehicle = new HashMap<>();
-            
-            mockVehicle.put("id", 1L);
-            mockVehicle.put("modelo", "Toyota Corolla");
-            mockVehicle.put("preco", 125000.00);
-            
-            mockItem.put("vehicle", mockVehicle);
-            mockCart.put("items", java.util.Collections.singletonList(mockItem));
-            mockCart.put("total", 125000.00);
-            mockCart.put("expiresAt", System.currentTimeMillis() + 300000); // 5 minutos
-            
-            model.addAttribute("cart", mockCart);
-            return "cart/cart";
-        }
-
+        
         cartService.getCart(token != null ? token : "")
-                .subscribe(cart -> model.addAttribute("cart", cart));
+                .subscribe(cart -> {
+                    model.addAttribute("cart", cart);
+                    // Verifica se o carrinho expirou
+                    if (cart != null && cart.containsKey("expiresAt")) {
+                        long expiresAt = ((Number) cart.get("expiresAt")).longValue();
+                        if (System.currentTimeMillis() > expiresAt) {
+                            model.addAttribute("error", "Seu carrinho expirou. Os itens foram removidos.");
+                            cartService.cancelCart(token != null ? token : "").subscribe();
+                        }
+                    }
+                });
 
         return "cart/cart";
     }
@@ -56,13 +44,9 @@ public class CartController {
                           RedirectAttributes redirectAttributes) {
         String token = (String) session.getAttribute("token");
 
-        if (isDevProfile()) {
-            return "redirect:/cart";
-        }
-
         cartService.addToCart(vehicleId, token != null ? token : "")
                 .subscribe(
-                    success -> {},
+                    success -> redirectAttributes.addFlashAttribute("success", "Item adicionado ao carrinho"),
                     error -> redirectAttributes.addFlashAttribute("error", "Erro ao adicionar ao carrinho")
                 );
 
@@ -71,40 +55,53 @@ public class CartController {
 
     @PostMapping("/remove")
     public String removeFromCart(@RequestParam Long vehicleId,
-                               HttpSession session) {
+                               HttpSession session,
+                               RedirectAttributes redirectAttributes) {
         String token = (String) session.getAttribute("token");
 
-        if (isDevProfile()) {
-            return "redirect:/cart";
+        try {
+            cartService.removeFromCart(vehicleId, token != null ? token : "")
+                    .block();
+            redirectAttributes.addFlashAttribute("success", "Item removido do carrinho");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao remover do carrinho");
         }
-
-        cartService.removeFromCart(vehicleId, token != null ? token : "")
-                .subscribe();
 
         return "redirect:/cart";
     }
 
     @PostMapping("/checkout")
-    public String checkout(HttpSession session) {
+    public String checkout(HttpSession session, RedirectAttributes redirectAttributes) {
         String token = (String) session.getAttribute("token");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isVendedor = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_VENDEDOR"));
 
-        if (isDevProfile()) {
+        try {
+            cartService.checkout(token != null ? token : "")
+                    .block();
+            redirectAttributes.addFlashAttribute("success", 
+                isVendedor ? "Venda efetivada com sucesso" : "Compra efetivada com sucesso");
             return "redirect:/vehicles";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", 
+                isVendedor ? "Erro ao efetivar venda" : "Erro ao efetivar compra");
+            return "redirect:/cart";
         }
-
-        cartService.checkout(token != null ? token : "")
-                .subscribe();
-
-        return "redirect:/vehicles";
     }
 
-    private boolean isDevProfile() {
-        String[] activeProfiles = environment.getActiveProfiles();
-        for (String activeProfile : activeProfiles) {
-            if (activeProfile.equalsIgnoreCase("dev")) {
-                return true;
-            }
+    @PostMapping("/cancel")
+    public String cancelCart(HttpSession session, RedirectAttributes redirectAttributes) {
+        String token = (String) session.getAttribute("token");
+
+        try {
+            cartService.cancelCart(token != null ? token : "")
+                    .block();
+            redirectAttributes.addFlashAttribute("success", "Carrinho cancelado com sucesso");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao cancelar carrinho");
         }
-        return false;
+
+        return "redirect:/vehicles";
     }
 } 

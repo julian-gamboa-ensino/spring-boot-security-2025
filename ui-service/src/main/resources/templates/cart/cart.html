@@ -17,6 +17,7 @@
         </header>
 
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
         <div id="timeout-warning" class="alert alert-warning" style="display: none;">
             <span id="timeout-counter"></span>
@@ -30,7 +31,9 @@
             <div th:each="item : ${cart.items}" class="cart-item">
                 <div class="item-details">
                     <h4 th:text="${item.vehicle.modelo}">Modelo</h4>
-                    <p th:text="${'R$ ' + item.vehicle.preco}">Preço</p>
+                    <p th:text="${'Ano: ' + item.vehicle.ano}">Ano</p>
+                    <p th:text="${'Preço: R$ ' + item.vehicle.preco}">Preço</p>
+                    <p th:text="${'Cor: ' + item.vehicle.cor}">Cor</p>
                 </div>
                 <form th:action="@{/cart/remove}" method="post" style="display: inline;">
                     <input type="hidden" name="vehicleId" th:value="${item.vehicle.id}">
@@ -46,18 +49,19 @@
                 
                 <div class="cart-actions">
                     <form th:action="@{/cart/checkout}" method="post" style="display: inline;">
-                        <button type="submit" class="btn">
+                        <button type="submit" class="btn btn-primary">
                             <span sec:authorize="hasRole('CLIENTE')">Efetivar Compra</span>
                             <span sec:authorize="hasRole('VENDEDOR')">Efetivar Venda</span>
                         </button>
                     </form>
-                    <form th:action="@{/cart/clear}" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-danger">Cancelar</button>
-                    </form>
+                    <a th:href="@{/vehicles/{id}(id=${cart.items[0].vehicle.id})}" class="btn btn-danger">Voltar para Detalhes</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Formulário oculto para cancelamento do carrinho -->
+    <form id="cancelForm" th:action="@{/cart/cancel}" method="post" style="display: none;"></form>
 
     <script th:inline="javascript">
         const cartTimeout = /*[[${cart.expiresAt}]]*/ null;
@@ -73,7 +77,7 @@
                 
                 if (timeLeft <= 0) {
                     alert('Seu carrinho expirou! Os itens serão removidos.');
-                    window.location.href = '/cart/clear';
+                    document.getElementById('cancelForm').submit();
                 } else if (timeLeft <= 30) { // Aviso nos últimos 30 segundos
                     warningElement.style.display = 'block';
                     counterElement.textContent = `Atenção: Seu carrinho expira em ${timeLeft} segundos!`;
