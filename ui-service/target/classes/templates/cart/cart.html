@@ -8,7 +8,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    <!-- Container principal da página -->
     <div class="container">
+        <!-- Cabeçalho com título e botão de voltar -->
         <header>
             <h2>Carrinho</h2>
             <div class="user-info">
@@ -16,57 +18,75 @@
             </div>
         </header>
 
+        <!-- Área de mensagens de erro e sucesso -->
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
+        <!-- Aviso de expiração do carrinho (inicialmente oculto) -->
         <div id="timeout-warning" class="alert alert-warning" style="display: none;">
             <span id="timeout-counter"></span>
         </div>
 
+        <!-- Lista de itens do carrinho -->
         <div class="cart-items">
+            <!-- Mensagem quando o carrinho está vazio -->
             <div th:if="${cart.items.empty}" class="empty-cart">
                 <p>Seu carrinho está vazio</p>
             </div>
             
+            <!-- Loop para cada item do carrinho -->
             <div th:each="item : ${cart.items}" class="cart-item">
+                <!-- Detalhes do veículo -->
                 <div class="item-details">
                     <h4 th:text="${item.vehicle.modelo}">Modelo</h4>
                     <p th:text="${'Ano: ' + item.vehicle.ano}">Ano</p>
                     <p th:text="${'Preço: R$ ' + item.vehicle.preco}">Preço</p>
                     <p th:text="${'Cor: ' + item.vehicle.cor}">Cor</p>
                 </div>
-                <form th:action="@{/cart/remove}" method="post" style="display: inline;">
+                <!-- Formulário para remover o item -->
+                <form th:action="@{/cart/remove}" method="post" style="display: inline;" onsubmit="return confirm('Deseja realmente remover este item do carrinho?');">
                     <input type="hidden" name="vehicleId" th:value="${item.vehicle.id}">
                     <button type="submit" class="btn btn-danger">Remover</button>
                 </form>
             </div>
 
+            <!-- Resumo do carrinho (apenas quando não está vazio) -->
             <div th:if="${!cart.items.empty}" class="cart-summary">
+                <!-- Total do carrinho -->
                 <div class="cart-total">
                     <strong>Total:</strong>
                     <span th:text="${'R$ ' + cart.total}">0.00</span>
                 </div>
                 
+                <!-- Botões de ação -->
                 <div class="cart-actions">
+                    <!-- Formulário para efetivar a compra/venda -->
                     <form th:action="@{/cart/checkout}" method="post" style="display: inline;">
                         <button type="submit" class="btn btn-primary">
+                            <!-- Texto do botão muda conforme o perfil do usuário -->
                             <span sec:authorize="hasRole('CLIENTE')">Efetivar Compra</span>
                             <span sec:authorize="hasRole('VENDEDOR')">Efetivar Venda</span>
                         </button>
                     </form>
-                    <a th:href="@{/vehicles/{id}(id=${cart.items[0].vehicle.id})}" class="btn btn-danger">Voltar para Detalhes</a>
+                    <!-- Link para voltar à página de detalhes do veículo -->
+                    <a th:href="@{/vehicles/{id}(id=${cart.items[0].vehicle.id})}" class="btn btn-secondary">Voltar para Detalhes</a>
+                    <!-- Botão para cancelar o carrinho -->
+                    <button type="button" class="btn btn-danger" onclick="confirmCancel()">Cancelar Carrinho</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Formulário oculto para cancelamento do carrinho -->
+    <!-- Formulário para cancelamento do carrinho -->
     <form id="cancelForm" th:action="@{/cart/cancel}" method="post" style="display: none;"></form>
 
+    <!-- Script para controle do tempo de expiração do carrinho -->
     <script th:inline="javascript">
+        // Obtém o tempo de expiração do carrinho do modelo
         const cartTimeout = /*[[${cart.expiresAt}]]*/ null;
         
         if (cartTimeout) {
+            // Função para verificar o tempo restante
             const checkExpiration = () => {
                 const now = new Date().getTime();
                 const expirationTime = new Date(cartTimeout).getTime();
@@ -75,20 +95,39 @@
                 const warningElement = document.getElementById('timeout-warning');
                 const counterElement = document.getElementById('timeout-counter');
                 
+                // Se o tempo acabou, cancela o carrinho
                 if (timeLeft <= 0) {
                     alert('Seu carrinho expirou! Os itens serão removidos.');
                     document.getElementById('cancelForm').submit();
-                } else if (timeLeft <= 30) { // Aviso nos últimos 30 segundos
+                } 
+                // Se faltam 30 segundos ou menos, mostra aviso
+                else if (timeLeft <= 30) {
                     warningElement.style.display = 'block';
                     counterElement.textContent = `Atenção: Seu carrinho expira em ${timeLeft} segundos!`;
                 }
             };
 
-            // Verificar a cada segundo
+            // Verifica o tempo a cada segundo
             setInterval(checkExpiration, 1000);
             
-            // Verificação inicial
+            // Primeira verificação
             checkExpiration();
+        }
+
+        // Função para mostrar mensagens de sucesso temporárias
+        function showSuccessMessage(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'alert alert-success';
+            successDiv.textContent = message;
+            document.querySelector('.container').insertBefore(successDiv, document.querySelector('.cart-items'));
+            setTimeout(() => successDiv.remove(), 3000);
+        }
+
+        // Função para confirmar o cancelamento do carrinho
+        function confirmCancel() {
+            if (confirm('Deseja realmente cancelar seu carrinho? Todos os itens serão removidos.')) {
+                document.getElementById('cancelForm').submit();
+            }
         }
     </script>
 </body>
