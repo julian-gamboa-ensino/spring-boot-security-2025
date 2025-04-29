@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.time.Instant;
+import java.time.ZoneId;
 
 /**
  * Controlador responsável por gerenciar todas as operações relacionadas ao carrinho de compras.
@@ -39,41 +41,58 @@ public class CartController {
      */
     @GetMapping
     public String viewCart(Model model, HttpSession session) {
-        // Obtém o token de autenticação da sessão
-        String token = (String) session.getAttribute("token");
-        
-        // Busca os itens do carrinho e adiciona ao modelo
-        cartService.getCart(token != null ? token : "")
-                .subscribe(cart -> {
-                    model.addAttribute("cart", cart);
-                    // Verifica se o carrinho expirou
-                    if (cart != null && cart.containsKey("expiresAt")) {
-                        LocalDateTime expiresAt = LocalDateTime.parse(cart.get("expiresAt").toString());
-                        LocalDateTime now = LocalDateTime.now();
-                        
-                        // Se o carrinho já expirou
-                        if (now.isAfter(expiresAt)) {
-                            model.addAttribute("error", "Seu carrinho expirou. Os itens foram removidos.");
-                            cartService.cancelCart(token != null ? token : "").subscribe();
-                        } else {
-                            // Calcula o tempo restante em segundos
-                            long timeLeft = ChronoUnit.SECONDS.between(now, expiresAt);
-                            model.addAttribute("timeLeft", timeLeft);
-                            
-                            // Adiciona aviso se faltar menos de 30 segundos
-                            if (timeLeft <= 30) {
-                                model.addAttribute("warning", "Atenção: Seu carrinho expira em " + timeLeft + " segundos!");
-                            }
-                        }
+        try {
+            // Obtém o token de autenticação da sessão
+            String token = (String) session.getAttribute("token");
+            if (token == null) token = "";
+
+            // Busca os itens do carrinho
+            Map<String, Object> cart = cartService.getCart(token).block();
+            
+            // Adiciona o carrinho ao modelo, mesmo que seja null
+            model.addAttribute("cart", cart);
+
+            // Adiciona o profile ativo
+            String[] activeProfiles = environment.getActiveProfiles();
+            String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "default";
+            model.addAttribute("activeProfile", activeProfile);
+
+            // Se o carrinho estiver vazio, adiciona uma mensagem
+            if (cart == null || cart.isEmpty()) {
+                model.addAttribute("info", "Carrinho vazio");
+                return "cart/cart";
+            }
+
+            // Processa a data de expiração apenas se existir
+            if (cart.containsKey("expiresAt")) {
+                try {
+                    long timestamp = Long.parseLong(cart.get("expiresAt").toString());
+                    LocalDateTime expiresAt = LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(timestamp), 
+                        ZoneId.systemDefault()
+                    );
+                    
+                    LocalDateTime now = LocalDateTime.now();
+                    if (now.isAfter(expiresAt)) {
+                        model.addAttribute("error", "Carrinho expirado");
+                        cartService.cancelCart(token).block();
+                    } else {
+                        long timeLeft = ChronoUnit.SECONDS.between(now, expiresAt);
+                        model.addAttribute("timeLeft", timeLeft);
                     }
-                });
+                } catch (Exception e) {
+                    model.addAttribute("warning", "Não foi possível verificar a expiração do carrinho");
+                }
+            }
 
-        // Adicione esta linha para expor o profile ativo
-        String[] activeProfiles = environment.getActiveProfiles();
-        String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "default";
-        model.addAttribute("activeProfile", activeProfile);
-
-        return "cart/cart";
+            return "cart/cart";
+            
+        } catch (Exception e) {
+            // Log do erro completo
+            e.printStackTrace();
+            model.addAttribute("error", "Erro ao processar o carrinho: " + e.getMessage());
+            return "error/500"; // Página de erro genérica
+        }
     }
 
     /**

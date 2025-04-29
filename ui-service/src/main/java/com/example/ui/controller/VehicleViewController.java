@@ -9,6 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +29,13 @@ public class VehicleViewController {
     private final Environment environment; // <-- Adicionado para acessar o profile ativo
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VENDOR')")
+    @PreAuthorize("hasAnyRole('CLIENTE', 'VENDEDOR')")
     public String listVehicles(Model model, HttpSession session) {
+        // Adiciona o profile ativo ao modelo
+        String[] activeProfiles = environment.getActiveProfiles();
+        String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "default";
+        model.addAttribute("activeProfile", activeProfile);
+
         String token = (String) session.getAttribute("token");
 
         if (isProdProfile() && token == null) {
@@ -136,8 +146,13 @@ public class VehicleViewController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VENDOR')")
+    @PreAuthorize("hasAnyRole('CLIENTE', 'VENDEDOR')")
     public String vehicleDetails(@PathVariable Long id, Model model, HttpSession session) {
+        // Adiciona o profile ativo ao modelo
+        String[] activeProfiles = environment.getActiveProfiles();
+        String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "default";
+        model.addAttribute("activeProfile", activeProfile);
+
         String token = (String) session.getAttribute("token");
 
         if (isProdProfile() && token == null) {
@@ -152,7 +167,7 @@ public class VehicleViewController {
     }
 
     @GetMapping("/manage")
-    @PreAuthorize("hasRole('VENDOR')")
+    @PreAuthorize("hasRole('VENDEDOR')")
     public String manageVehicles() {
         return "vehicle/manage";
     }

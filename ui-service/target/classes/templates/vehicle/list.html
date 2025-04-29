@@ -17,6 +17,10 @@
             </div>
         </header>
 
+        <div sec:authorize="hasRole('VENDEDOR')" style="margin: 10px 0;">
+            <a th:href="@{/users}" class="btn btn-info">Listar Usuários</a>
+        </div>
+
         <div class="vehicles-grid">
             <div th:each="vehicle : ${vehicles}" class="vehicle-card">
                 <h3 th:text="${vehicle.modelo}">Modelo</h3>
@@ -27,8 +31,13 @@
             </div>
         </div>
 
-        <div sec:authorize="hasRole('VENDEDOR')" class="admin-section">
-            <a th:href="@{/users}" class="btn">Listar Usuários</a>
+        <!-- Debug em ambiente dev -->
+        <div th:if="${activeProfile == 'dev'}" class="alert alert-info">
+            <p>Profile ativo: <span th:text="${activeProfile}">dev</span></p>
+            <p>
+                Usuário: <span sec:authentication="name"></span><br>
+                Roles: <span sec:authentication="authorities"></span>
+            </p>
         </div>
     </div>
 </body>
