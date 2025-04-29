@@ -59,11 +59,25 @@ public class LoginController {
         try {
             if (mockLogin) {
                 // MODO MOCK: apenas para desenvolvimento inicial
-                if ("admin".equals(username) && "admin123".equals(password)) {
-                    return "redirect:/vehicles"; // sucesso mockado
-                } else {
+                if ("vendedor".equals(username) && "vendedor123".equals(password)) {
+                    // Simula login do vendedor
+                    model.addAttribute("role", "ROLE_VENDEDOR");
+                    return "redirect:/vehicles";
+                }
+                // Mock para CLIENTE
+                else if ("cliente".equals(username) && "cliente123".equals(password)) {
+                    // Simula login do cliente
+                    model.addAttribute("role", "ROLE_CLIENTE");
+                    return "redirect:/vehicles";
+                }
+                // Mock para ADMIN (mantendo o existente)
+                else if ("admin".equals(username) && "admin123".equals(password)) {
+                    model.addAttribute("role", "ROLE_ADMIN");
+                    return "redirect:/vehicles";
+                }
+                else {
                     model.addAttribute("error", "Usuário ou senha inválidos (modo mock)");
-                    return "login"; // volta para login com erro
+                    return "login";
                 }
             } else {
                 // MODO REAL: valida usando o auth-service

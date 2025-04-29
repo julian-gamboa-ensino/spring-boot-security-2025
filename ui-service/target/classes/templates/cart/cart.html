@@ -18,6 +18,18 @@
             </div>
         </header>
 
+        <!-- Área de debug - só aparece em ambiente dev -->
+        <div th:if="${activeProfile == 'dev'}" class="alert alert-info">
+            <!-- Debug do profile ativo -->
+            <p>Profile ativo: <span th:text="${activeProfile}">dev</span></p>
+            
+            <!-- Debug para verificar autenticação e roles -->
+            <p>
+                Usuário: <span sec:authentication="name">anonymousUser</span><br>
+                Roles: <span sec:authentication="authorities">[ROLE_ANONYMOUS]</span>
+            </p>
+        </div>
+
         <!-- Área de mensagens de erro e sucesso -->
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
@@ -57,21 +69,27 @@
                     <strong>Total:</strong>
                     <span th:text="${'R$ ' + cart.total}">0.00</span>
                 </div>
-                
-                <!-- Botões de ação -->
+                <!-- Área de ações do carrinho -->
                 <div class="cart-actions">
-                    <!-- Formulário para efetivar a compra/venda -->
-                    <form th:action="@{/cart/checkout}" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-primary">
-                            <!-- Texto do botão muda conforme o perfil do usuário -->
-                            <span sec:authorize="hasRole('CLIENTE')">Efetivar Compra</span>
-                            <span sec:authorize="hasRole('VENDEDOR')">Efetivar Venda</span>                            
-                        </button>
-                    </form>
-                    <!-- Link para voltar à página de detalhes do veículo -->
-                    <a th:href="@{/vehicles/{id}(id=${cart.items[0].vehicle.id})}" class="btn btn-secondary">Voltar para Detalhes</a>
-                    <!-- Botão para cancelar o carrinho -->
-                    <button type="button" class="btn btn-danger" onclick="confirmCancel()">Cancelar Carrinho</button>
+                    <!-- Botão com verificação de roles -->
+                    <button type="button" class="btn btn-primary">
+                        <span sec:authorize="hasRole('CLIENTE')">
+                            <span th:text="${activeProfile == 'dev'} ? '[DEV] Simular Compra' : 'Efetivar Compra'">
+                                Efetivar Compra
+                            </span>
+                        </span>
+                        <span sec:authorize="hasRole('VENDEDOR')">
+                            <span th:text="${activeProfile == 'dev'} ? '[DEV] Simular Venda' : 'Efetivar Venda'">
+                                Efetivar Venda
+                            </span>
+                        </span>
+                        <span sec:authorize="isAnonymous()">
+                            Ação Indisponível
+                        </span>
+                    </button>
+                    
+                    <!-- Link para voltar -->
+                    <a th:href="@{/vehicles}" class="btn btn-secondary">Voltar</a>
                 </div>
             </div>
         </div>
@@ -130,5 +148,13 @@
             }
         }
     </script>
+
+    <div>
+        <p>Authentication status:</p>
+        <ul>
+            <li>IsAuthenticated: <span sec:authorize="isAuthenticated()">Sim</span><span sec:authorize="!isAuthenticated()">Não</span></li>
+            <li>IsAnonymous: <span sec:authorize="isAnonymous()">Sim</span><span sec:authorize="!isAnonymous()">Não</span></li>
+        </ul>
+    </div>
 </body>
 </html> 

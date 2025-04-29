@@ -1,39 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Usuários Cadastrados</title>
+    <title>Listagem de Usuários</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h2>Usuários Cadastrados</h2>
-            <div class="user-info">
-                <a th:href="@{/vehicles}" class="btn">Voltar</a>
-            </div>
-        </header>
+        <!-- Debug em ambiente dev -->
+        <div th:if="${activeProfile == 'dev'}" class="alert alert-info">
+            <p>Profile ativo: <span th:text="${activeProfile}">dev</span></p>
+            <p>
+                Usuário: <span sec:authentication="name"></span><br>
+                Roles: <span sec:authentication="authorities"></span>
+            </p>
+        </div>
 
-        <div class="users-table">
-            <table>
+        <h2>Usuários Cadastrados</h2>
+
+        <!-- Tabela de usuários -->
+        <div class="table-responsive">
+            <table class="table">
                 <thead>
                     <tr>
+                        <th>CPF</th>
                         <th>Nome</th>
                         <th>Login</th>
-                        <th>CPF</th>
                         <th>Perfil</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="user : ${users}">
-                        <td th:text="${user.name}">Nome</td>
-                        <td th:text="${user.login}">Login</td>
-                        <td th:text="${user.cpf}">CPF</td>
-                        <td th:text="${user.role}">Perfil</td>
+                        <td th:text="${user.cpf}">123.456.789-00</td>
+                        <td th:text="${user.nome}">Nome do Usuário</td>
+                        <td th:text="${user.login}">usuario</td>
+                        <td th:text="${user.perfil}">CLIENTE</td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Botão Voltar -->
+        <a th:href="@{/vehicles}" class="btn btn-secondary">Voltar para Listagem</a>
+
+        <!-- Adicionar após o header da página -->
+        <div sec:authorize="hasRole('VENDEDOR')" class="admin-actions">
+            <a th:href="@{/users}" class="btn btn-info">Listar Usuários</a>
         </div>
     </div>
 </body>

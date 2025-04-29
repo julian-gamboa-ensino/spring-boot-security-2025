@@ -3,6 +3,8 @@ package com.example.ui.controller;
 import com.example.ui.service.CartUIService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,9 @@ public class CartController {
 
     // Injeção do serviço que gerencia as operações do carrinho
     private final CartUIService cartService;
+
+    @Autowired
+    private Environment environment;
 
     /**
      * Exibe a página do carrinho com os itens adicionados.
@@ -62,6 +67,11 @@ public class CartController {
                         }
                     }
                 });
+
+        // Adicione esta linha para expor o profile ativo
+        String[] activeProfiles = environment.getActiveProfiles();
+        String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "default";
+        model.addAttribute("activeProfile", activeProfile);
 
         return "cart/cart";
     }
