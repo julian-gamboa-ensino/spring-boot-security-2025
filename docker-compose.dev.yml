@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+
+  # Banco de dados MySQL para todos os microserviços
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: commercedb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - dev-network
+
+  # Interface web para visualização do banco de dados
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8085:80"
+    environment:
+      PMA_HOST: mysql
+    depends_on:
+      - mysql
+    networks:
+      - dev-network
+
+  # Microserviço de autenticação
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile.dev
+    container_name: auth-service-dev
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/commercedb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    volumes:
+      - ./auth-service:/app
+      - ~/.m2:/root/.m2
+    working_dir: /app
+    command: ["./mvnw", "spring-boot:run"]
+    depends_on:
+      - mysql
+    networks:
+      - dev-network
+
+  # Microserviço de comércio
+  commerce-service:
+    build:
+      context: ./commerce-service
+      dockerfile: Dockerfile.dev
+    container_name: commerce-service-dev
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/commercedb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - AUTH_SERVICE_URL=http://auth-service:8082
+    volumes:
+      - ./commerce-service:/app
+      - ~/.m2:/root/.m2
+    working_dir: /app
+    command: ["./mvnw", "spring-boot:run"]
+    depends_on:
+      - mysql
+      - auth-service
+    networks:
+      - dev-network
+
+  # Microserviço de front-end (UI)
+  ui-service:
+    build:
+      context: ./ui-service
+      dockerfile: Dockerfile.dev
+    container_name: ui-service-dev
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - COMMERCE_SERVICE_URL=http://commerce-service:8081
+      - AUTH_SERVICE_URL=http://auth-service:8082
+    volumes:
+      - ./ui-service:/app
+      - ~/.m2:/root/.m2
+    working_dir: /app
+    command: ["./mvnw", "spring-boot:run"]
+    depends_on:
+      - commerce-service
+      - auth-service
+    networks:
+      - dev-network
+
+volumes:
+  mysql_data:
+
+networks:
+  dev-network:
+    driver: bridge

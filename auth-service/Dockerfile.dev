@@ -1,0 +1,37 @@
+# Etapa 1: Base de build para baixar dependências e usar como cache
+FROM maven:3.8.4-openjdk-17-slim AS build
+WORKDIR /app
+
+# Copia apenas arquivos de build (pom.xml e diretórios de configuração)
+COPY pom.xml .
+COPY .mvn .mvn
+COPY mvnw .
+
+# Permissão de execução
+RUN chmod +x ./mvnw
+
+# Baixa dependências para uso offline (acelera o hot reload no volume)
+RUN ./mvnw dependency:go-offline
+
+# Etapa 2: Imagem final de desenvolvimento com volume e hot reload
+FROM openjdk:17-jdk-slim
+
+# Instala ferramentas úteis (opcional, mas ajuda em debug)
+RUN apt-get update && apt-get install -y curl vim netcat && apt-get clean
+
+# Diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copia o wrapper e dependências já baixadas
+COPY --from=build /root/.m2 /root/.m2
+COPY --from=build /app/mvnw .
+COPY --from=build /app/.mvn .mvn
+
+# Permissão para executar
+RUN chmod +x ./mvnw
+
+# Copia o restante do projeto (opcional — no Compose DEV usamos volume montado)
+COPY . .
+
+# Comando padrão para hot reload
+CMD ["./mvnw", "spring-boot:run"]
