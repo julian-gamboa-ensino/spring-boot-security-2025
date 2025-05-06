@@ -9,13 +9,22 @@ import reactor.core.publisher.Mono;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Serviço para gerenciar operações do carrinho de compras.
+ * No perfil 'dev', usa mockagem com estado persistente e simulação de erros.
+ * No perfil 'prod', faz chamadas ao commerce-service.
+ */
 @Service
 @RequiredArgsConstructor
 public class CartUIService {
 
     private final WebClient commerceWebClient;
     private final Environment environment;
-
+    /**
+     * Adiciona um veículo ao carrinho.
+     * No perfil dev, atualiza o carrinho mockado em memória.
+     * No perfil prod, faz chamada ao commerce-service.
+     */
     public Mono<Map> addToCart(Long vehicleId, String token) {
         if (isDevProfile()) {
             // Mock data for development
@@ -31,7 +40,11 @@ public class CartUIService {
                 .retrieve()
                 .bodyToMono(Map.class);
     }
-
+    /**
+     * Recupera o carrinho.
+     * No perfil dev, retorna o carrinho mockado ou simula carrinho vazio/expirado.
+     * No perfil prod, faz chamada ao commerce-service.
+     */
     public Mono<Map> getCart(String token) {
         if (isDevProfile()) {
             // Mock data for development
@@ -59,7 +72,11 @@ public class CartUIService {
                 .retrieve()
                 .bodyToMono(Map.class);
     }
-
+    /**
+     * Remove um veículo do carrinho.
+     * No perfil dev, atualiza o carrinho mockado.
+     * No perfil prod, faz chamada ao commerce-service.
+     */
     public Mono<Map> removeFromCart(Long vehicleId, String token) {
         if (isDevProfile()) {
             // Mock data for development
@@ -75,7 +92,11 @@ public class CartUIService {
                 .retrieve()
                 .bodyToMono(Map.class);
     }
-
+    /**
+     * Finaliza a compra do carrinho.
+     * No perfil dev, simula checkout com validações.
+     * No perfil prod, faz chamada ao commerce-service.
+     */
     public Mono<Map> checkout(String token) {
         if (isDevProfile()) {
             // Mock data for development
@@ -91,7 +112,11 @@ public class CartUIService {
                 .retrieve()
                 .bodyToMono(Map.class);
     }
-
+    /**
+     * Cancela o carrinho.
+     * No perfil dev, remove o carrinho mockado.
+     * No perfil prod, faz chamada ao commerce-service.
+     */
     public Mono<Map> cancelCart(String token) {
         if (isDevProfile()) {
             // Mock data for development

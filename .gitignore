@@ -1,8 +1,19 @@
+mvnw
+mvnw.cmd
+services.sh
+create_feature_branches.sh
+
+
+
+
 # Compiled class file
 *.class
 
 # Log file
 *.log
+
+# Arquivos locais
+*.txt
 
 # BlueJ files
 *.ctxt
@@ -23,3 +34,6 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+
+.vscode # IntelliJ IDEA

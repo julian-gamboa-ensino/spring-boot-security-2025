@@ -1,0 +1,102 @@
+  version: '3.8'
+
+services:
+
+  # Banco de dados MySQL utilizado por todos os microserviços
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: commercedb
+    ports:
+      - "3306:3306"  # exposto apenas para fins administrativos
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # Interface web para acessar o MySQL — ideal para visualizar dados durante testes e admin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8085:80"  # acessível via http://localhost:8085
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  # Serviço responsável pela autenticação e autorização
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/commercedb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # Serviço que gerencia regras de negócio e operações do comércio
+  commerce-service:
+    build:
+      context: ./commerce-service
+      dockerfile: Dockerfile
+    container_name: commerce-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/commercedb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - AUTH_SERVICE_URL=http://auth-service:8082
+    depends_on:
+      mysql:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - app-network
+
+  # Serviço responsável pela camada de apresentação (UI) — pode ser SPA ou servidor MVC
+  ui-service:
+    build: ./ui-service
+    container_name: ui-service
+    ports:
+      - "8080:8080"  # interface do usuário acessível via http://localhost:8080
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - COMMERCE_SERVICE_URL=http://commerce-service:8081
+      - AUTH_SERVICE_URL=http://auth-service:8082
+    depends_on:
+      - commerce-service
+      - auth-service
+    networks:
+      - app-network
+
+volumes:
+  # Volume persistente para armazenar dados do banco de dados mesmo após o container ser destruído
+  mysql_data:
+    driver: local
+
+networks:
+  # Rede virtual para permitir comunicação interna entre os containers
+  app-network:
+    driver: bridge

@@ -1,28 +1,55 @@
+version: '3.8'
+
+# Definimos a seção de serviços da aplicação
 services:
+
+  # -----------------------
+  # Banco de dados MySQL
+  # -----------------------
   mysql:
-    image: mysql:8.0
-    container_name: mysql
+    image: mysql:8.0                      # Versão oficial do MySQL 8
+    container_name: mysql                # Nome do container para facilitar referências
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: commercedb
+      MYSQL_ROOT_PASSWORD: root         # Senha do usuário root
+      MYSQL_DATABASE: commercedb        # Nome do banco inicial usado por todos os serviços
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql        # Volume persistente dos dados
     ports:
-      - "3306:3306"
+      - "3306:3306"                       # Porta exposta para acesso externo (se necessário)
     command: --default-authentication-plugin=mysql_native_password
-    healthcheck:
+    healthcheck:                         # Verifica se o banco está pronto para conexões
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
+      - app-network                      # Rede virtual compartilhada entre os serviços
+
+  # -----------------------------
+  # phpMyAdmin para visualização
+  # -----------------------------
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin         # Imagem oficial do phpMyAdmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8085:80"                         # Acessível em http://localhost:8085
+    environment:
+      PMA_HOST: mysql                    # Nome do serviço mysql como host
+      PMA_PORT: 3306
+    depends_on:
+      - mysql
+    networks:
       - app-network
 
+  # ---------------------------------------
+  # Serviço de Autenticação (Auth Service)
+  # ---------------------------------------
   auth-service:
-    build: ./auth-service
+    build: ./auth-service                # Caminho para o código-fonte do microserviço
     container_name: auth-service
     ports:
-      - "8082:8082"
+      - "8082:8082"                      # Porta onde o serviço escuta
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/commercedb
@@ -30,13 +57,16 @@ services:
       - SPRING_DATASOURCE_PASSWORD=root
     depends_on:
       mysql:
-        condition: service_healthy
+        condition: service_healthy       # Aguarda o banco de dados estar "pronto"
     networks:
       - app-network
 
+  # -------------------------------------
+  # Serviço de Comércio (Commerce Service)
+  # -------------------------------------
   commerce-service:
     build:
-      context: ./commerce-service
+      context: ./commerce-service        # Diretório com Dockerfile
       dockerfile: Dockerfile
     container_name: commerce-service
     ports:
@@ -46,7 +76,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/commercedb
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
-      - AUTH_SERVICE_URL=http://auth-service:8082
+      - AUTH_SERVICE_URL=http://auth-service:8082   # Comunicação com o serviço de autenticação
     depends_on:
       mysql:
         condition: service_healthy
@@ -55,11 +85,14 @@ services:
     networks:
       - app-network
 
+  # ---------------------------------------
+  # Microserviço de Interface (UI Server)
+  # ---------------------------------------
   ui-service:
-    build: ./ui-service
+    build: ./ui-service                 # Front-end do sistema (pode ser Spring, React, etc)
     container_name: ui-service
     ports:
-      - "8080:8080"
+      - "8080:8080"                     # Porta principal de acesso ao sistema
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - COMMERCE_SERVICE_URL=http://commerce-service:8081
@@ -70,10 +103,16 @@ services:
     networks:
       - app-network
 
+# -------------------
+# Volume persistente
+# -------------------
 volumes:
   mysql_data:
     driver: local
 
+# -------------------
+# Rede compartilhada
+# -------------------
 networks:
   app-network:
-    driver: bridge
+    driver: bridge                     # Rede interna Docker para comunicação entre os serviços

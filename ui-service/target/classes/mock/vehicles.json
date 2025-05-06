@@ -1,0 +1,79 @@
+[
+  {
+      "id": 1,
+      "modelo": "Toyota Corolla",
+      "ano": 2023,
+      "preco": 125000.00,
+      "cor": "Prata"
+  },
+  {
+      "id": 2,
+      "modelo": "Honda Civic",
+      "ano": 2024,
+      "preco": 135000.00,
+      "cor": "Preto"
+  },
+  {
+      "id": 3,
+      "modelo": "Volkswagen Golf",
+      "ano": 2023,
+      "preco": 145000.00,
+      "cor": "Branco"
+  },
+  {
+      "id": 4,
+      "modelo": "Chevrolet Onix",
+      "ano": 2024,
+      "preco": 85000.00,
+      "cor": "Vermelho"
+  },
+  {
+      "id": 5,
+      "modelo": "Fiat Argo",
+      "ano": 2023,
+      "preco": 75000.00,
+      "cor": "Azul"
+  },
+  {
+      "id": 6,
+      "modelo": "Hyundai HB20",
+      "ano": 2024,
+      "preco": 82000.00,
+      "cor": "Cinza"
+  },
+  {
+      "id": 7,
+      "modelo": "Renault Kwid",
+      "ano": 2023,
+      "preco": 65000.00,
+      "cor": "Verde"
+  },
+  {
+      "id": 8,
+      "modelo": "Jeep Renegade",
+      "ano": 2024,
+      "preco": 155000.00,
+      "cor": "Laranja"
+  },
+  {
+      "id": 9,
+      "modelo": "Nissan Kicks",
+      "ano": 2023,
+      "preco": 125000.00,
+      "cor": "Marrom"
+  },
+  {
+      "id": 10,
+      "modelo": "Ford Ranger",
+      "ano": 2024,
+      "preco": 245000.00,
+      "cor": "Prata"
+  },
+  {
+      "id": 11,
+      "modelo": "Toyota Hilux",
+      "ano": 2023,
+      "preco": 255000.00,
+      "cor": "Preto"
+  }
+]

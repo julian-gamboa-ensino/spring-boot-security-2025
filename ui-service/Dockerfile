@@ -15,5 +15,5 @@ RUN mvn clean package -DskipTests
 
 # Etapa 2: Gerar a imagem final
 FROM openjdk:17-jdk-slim
-COPY --from=build /app/target/ui-service.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
