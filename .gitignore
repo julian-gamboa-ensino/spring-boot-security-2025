@@ -1,3 +1,4 @@
+.mvn/wrapper
 mvnw
 mvnw.cmd
 services.sh
