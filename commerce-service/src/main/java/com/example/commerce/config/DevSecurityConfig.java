@@ -11,21 +11,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @Profile("dev")
 @EnableWebSecurity
 public class DevSecurityConfig {
-    
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        if ("dev".equals(System.getProperty("spring.profiles.active"))) {
-            http
-                .authorizeHttpRequests(auth -> auth
-                    .anyRequest().permitAll())
-                .csrf(csrf -> csrf.disable());
-        } else {
-            http
-                .authorizeHttpRequests(auth -> auth
-                    .anyRequest().authenticated())
-                .csrf(csrf -> csrf.disable());
-        }
-            
+        http
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll())
+            .csrf(csrf -> csrf.disable());
         return http.build();
     }
 }

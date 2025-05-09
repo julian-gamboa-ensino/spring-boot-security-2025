@@ -61,6 +61,7 @@ public class VehicleController {
 
     @PostMapping
     public VehicleDTO createVehicle(@RequestBody VehicleDTO vehicle) {
+        System.out.println("Recebendo requisição POST para criar veículo");
         return vehicleService.createVehicle(vehicle);
     }
 

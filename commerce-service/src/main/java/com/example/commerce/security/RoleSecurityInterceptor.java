@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-@Profile("!dev")  // Desativa a interceptação no perfil de desenvolvimento
+@Profile("prod")  
 public class RoleSecurityInterceptor implements HandlerInterceptor {
 
     @Override
