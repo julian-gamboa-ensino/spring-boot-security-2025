@@ -52,8 +52,35 @@ public class VehicleService {
      */
     public List<VehicleDTO> listarDisponiveis() {
         return vehicleMapper.toDTOList(
-            vehicleRepository.findByDisponivelTrue()
+            vehicleRepository.findByDisponivelTrueAndVendidoFalse()
         );
+    }
+
+    /**
+     * Cria um novo veículo
+     */
+    @Transactional
+    public VehicleDTO createVehicle(VehicleDTO vehicleDto) {
+        Vehicle vehicle = vehicleMapper.toEntity(vehicleDto);
+        vehicle.setDisponivel(true);
+        vehicle.setVendido(false);
+        Vehicle savedVehicle = vehicleRepository.save(vehicle);
+        return vehicleMapper.toDTO(savedVehicle);
+    }
+
+    /**
+     * Deleta um veículo
+     */
+    @Transactional
+    public void deleteVehicle(Long id) {
+        Vehicle vehicle = vehicleRepository.findByIdWithLock(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
+
+        if (!vehicle.isDisponivel() || vehicle.isVendido()) {
+            throw new BusinessException("Não é possível deletar um veículo que não está disponível");
+        }
+
+        vehicleRepository.delete(vehicle);
     }
 
     /**

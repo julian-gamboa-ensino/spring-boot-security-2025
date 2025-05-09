@@ -1,14 +1,14 @@
 package com.example.commerce.security;
 
-
 import jakarta.annotation.Nonnull;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
+@Profile("!dev")  // Desativa a interceptação no perfil de desenvolvimento
 public class RoleSecurityInterceptor implements HandlerInterceptor {
 
     @Override

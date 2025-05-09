@@ -22,6 +22,20 @@ public class VehicleMapper {
         dto.setVendido(vehicle.isVendido());
         return dto;
     }
+
+    public Vehicle toEntity(VehicleDTO dto) {
+        if (dto == null) return null;
+        
+        Vehicle vehicle = new Vehicle();
+        vehicle.setId(dto.getId());
+        vehicle.setModelo(dto.getModelo());
+        vehicle.setAno(dto.getAno());
+        vehicle.setColor(dto.getColor());
+        vehicle.setPreco(dto.getPreco());
+        vehicle.setDisponivel(dto.isDisponivel());
+        vehicle.setVendido(dto.isVendido());
+        return vehicle;
+    }
     
     public List<VehicleDTO> toDTOList(List<Vehicle> vehicles) {
         if (vehicles == null) return null;

@@ -1,3 +1,4 @@
+*.lst
 mvnw
 mvnw.cmd
 services.sh
