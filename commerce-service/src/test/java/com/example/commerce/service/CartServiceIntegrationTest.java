@@ -15,7 +15,13 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Integration test for CartService using Testcontainers with MySQL.
+ * This test requires a running MySQL container and will create a database schema
+ * based on the provided init.sql script.
+ */
 @SpringBootTest
+
 @Testcontainers
 @ActiveProfiles("test")
 class CartServiceIntegrationTest {
