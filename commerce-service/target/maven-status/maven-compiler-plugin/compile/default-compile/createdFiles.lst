@@ -1,4 +1,5 @@
 com/example/commerce/service/CartService.class
+com/example/commerce/config/DevSecurityConfig.class
 com/example/commerce/exception/BusinessException.class
 com/example/commerce/service/VehicleService.class
 com/example/commerce/repository/VehicleRepository.class

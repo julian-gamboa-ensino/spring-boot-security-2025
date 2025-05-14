@@ -1,4 +1,5 @@
-/app/src/test/java/com/example/commerce/monitoring/PerformanceMonitoringAspectTest.java
-/app/src/test/java/com/example/commerce/controller/VehicleControllerTest.java
-/app/src/test/java/com/example/commerce/monitoring/MetricsServiceTest.java
-/app/src/test/java/com/example/commerce/service/CartServiceTest.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/test/java/com/example/commerce/monitoring/MetricsServiceTest.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/test/java/com/example/commerce/controller/VehicleControllerTest.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/test/java/com/example/commerce/service/CartServiceTest.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/test/java/com/example/commerce/monitoring/PerformanceMonitoringAspectTest.java
+/home/julian/cursor/spring-boot-security-2025/commerce-service/src/test/java/com/example/commerce/service/CartServiceIntegrationTest.java
