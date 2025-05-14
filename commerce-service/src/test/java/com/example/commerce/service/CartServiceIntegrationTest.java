@@ -25,6 +25,7 @@ class CartServiceIntegrationTest {
             .withDatabaseName("commerce_db")
             .withUsername("test")
             .withPassword("test")
+            .withInitScript("init.sql")
             .withReuse(true);
 
     @DynamicPropertySource
